@@ -1,4 +1,5 @@
 *.pyc
+*.pyq
 *.pyo
 .*.swp
 .*.swo
@@ -6,3 +7,5 @@
 .DS_Store
 nohup.out
 private.py
+geckodriver.log
+ghostdriver.log

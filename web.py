@@ -6,9 +6,8 @@ app = Flask(__name__)
 @app.route('/') 
 def home():
     results = WebScrapers()
-    results = results.get_commbank_td()
-
-    print results
+    results = results.collate_td()
+    
 
     return render_template('index.html')
 
