@@ -11,5 +11,12 @@ def home():
 
     return render_template('index.html')
 
+
+@app.route('/term_deposit')
+def term_deposit():
+
+    return render_template('term_deposit.html')
+
+
 if __name__ == "__main__":
     app.run(debug=True)
