@@ -42,45 +42,31 @@ class WebScrapers(object):
         """
         url = 'https://www.commbank.com.au/personal/accounts/term-deposits/rates-fees.html'
         soup = self.get_soup(url)
-        content = soup.find('div', {'class': 'column full-col'})
         
-        links = content.find_all('tr')
-
         term_comm = []
-        for link in links:
-            
-            string = link.find('p').string
-            if '3' in string:
-                if '6' not in string:
-                    rate = string.split('m', 1)[0]
-                    days_90 = link.find('div', {'class': 'path52 tablecell'})
-                    short = {
-                        'months': days_90.find('p').string,
-                        'rate': rate
-                    }
-                    term_comm.append(short)
+        
+        short = {
+            'days': '90',
+            'rate': soup.find('div', {'class': 'path52 tablecell'}).find('p').string.split()[0]
+        }
+        term_comm.append(short)
+        mid = {
+            'days': '210',
+            'rate': soup.find('div', {'class': 'path42 tablecell'}).find('p').string.split()[0]
+        }
+        term_comm.append(mid)
+        long_ = {
+            'days': '360',
+            'rate': soup.find('div', {'class': 'path32 tablecell'}).find('p').string.split()[0]
+        }
+        term_comm.append(long_)
 
-            if '7' in string:
-                if '36' not in string:
-                    rate = string.split('m', 1)[0]
-                    days_210 = link.find('div', {'class': 'path42 tablecell'})
-                    
-                    mid = { 
-                        'months': days_210.find('p').string,
-                        'rate': rate
-                    }
-                    term_comm.append(mid)
-
-            if '12' in string:
-                rate = string.split('m', 1)[0]
-                days_360 = link.find('div', {'class': 'path32 tablecell'})
-                
-                long_ = {
-                    'months': days_360.find('p').string,
-                    'rate': rate
-                }
-                term_comm.append(long_)
-
+        bank = {
+            'name': 'CBA',
+            'logo': 'https://static.commsec.com.au/_config/login/image.img.png/1433128787287.png'
+        }
+        term_comm.append(bank)
+        
         return term_comm
 
     
@@ -110,31 +96,29 @@ class WebScrapers(object):
         
         count = 0
         anz_td = []
-        advanced = []
-        standard = []
         for rates in content:
             
             if count is 0:
                 short = {
-                    'months': '3',
+                    'days': '90',
                     'rate': rates.string
                 }
-                advanced.append(short)
+                anz_td.append(short)
             
             if count is 2:
                 mid = {
-                    'months': '6',
+                    'days': '120',
                     'rate': rates.string
                 }
-                advanced.append(mid)
+                anz_td.append(mid)
 
             if count is 3:
                 long_ = {
-                    'months': '12',
+                    'days': '360',
                     'rate': rates.string
                 }
-                advanced.append(long_)
-            
+                anz_td.append(long_)
+            """
             if count is 4:
                 short = {
                     'months': '3',
@@ -155,12 +139,15 @@ class WebScrapers(object):
                     'rate': rates.string
                 }
                 standard.append(long_)
-
+            """
             count = count + 1
-        
-        anz_td.append(advanced)
-        anz_td.append(standard)
-        
+            
+        bank = { 
+            'name': 'ANZ Advanced',
+            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg'
+        }
+        anz_td.append(bank)
+
         return anz_td
     
 
@@ -200,6 +187,10 @@ class WebScrapers(object):
                     }
                     west_td.append(long_)
         
+        west_td.append([{
+            'name': 'Westpac',
+            'logo': 'https://www.westpac.com.au/etc/designs/wbc/clientlib-all/favicon.ico'
+        }])
         return west_td    
 
     
@@ -220,14 +211,6 @@ class WebScrapers(object):
                 }
                 nab_td.append(short) 
                 
-            if '6 months*' == rate.find('td').string:
-                
-                mid = {
-                    'months': '6',
-                    'rate': rate.find_all('td')[1].string.split()[0]
-                }
-                nab_td.append(mid)
-            
             if '8 months*' == rate.find('td').string:
                 
                 mid = {
@@ -244,6 +227,10 @@ class WebScrapers(object):
                 }
                 nab_td.append(long_)
         
+        nab_td.append([{
+            'name': 'NAB',
+            'logo': 'https://pbs.twimg.com/profile_images/820753240648130561/tWPXUFde_reasonably_small.jpg'
+        }])
         return nab_td
 
 
@@ -286,6 +273,10 @@ class WebScrapers(object):
                     }
                     george_td.append(long_)
 
+        goerge_td.append([{
+            'name': 'St George',
+            'logo': 'https://static-s.aa-cdn.net/img/ios/374217099/14ba7f1b9612d79fa95130641dc29e4e'
+        }])
         return george_td
        
     
@@ -320,6 +311,9 @@ class WebScrapers(object):
                 }
                 bankwest_td.append(long_)
         
+        bankwest_td.append([{
+            'name': 'Bankwest'
+        }])
         return bankwest_td
 
 
@@ -381,7 +375,10 @@ class WebScrapers(object):
             'standard': standard, 
             'loyalty': loyalty
         }])
-
+        
+        ubank_td.append([{
+            'name': 'UBank'
+        }])
         return ubank_td
     
 
@@ -417,6 +414,9 @@ class WebScrapers(object):
                     }
                     boq_td.append(long_)
         
+        boq_td.append([{
+            'name': 'BOQ'
+        }])
         return boq_td
     
 
@@ -451,7 +451,10 @@ class WebScrapers(object):
                         'rate': curr[5].string.strip()
                     }
                     rabo_td.append(long_)
-        print rabo_td
+
+        rabo_td.append([{
+            'name': 'RaboDirect'
+        }])
         return rabo_td
 
      
@@ -489,6 +492,9 @@ class WebScrapers(object):
                     }
                     bom_td.append(long_)
         
+        bom_td.append([{
+            'name': 'BOM'
+        }])
         return bom_td
 
     
@@ -506,13 +512,6 @@ class WebScrapers(object):
             if '90 day rate' in curr: 
                 short = {
                     'months': '3',
-                    'rate': rate.find('span').string
-                }
-                ing_td.append(short)
-
-            if '120 day rate' in curr:
-                short = {
-                    'months': '4',
                     'rate': rate.find('span').string
                 }
                 ing_td.append(short)
@@ -535,8 +534,11 @@ class WebScrapers(object):
             'note': 'loyalty bonus +.10',
             'interest': 'on maturity'
         }
-        ing_td.append(note)
         
+        ing_td.append(note)
+        ing_td.append([{
+            'name': 'ING Direct'
+        }])
         return ing_td
      
 
@@ -560,6 +562,9 @@ class WebScrapers(object):
             'rate': rates[2].string
         }]    
         
+        sun_td.append([{
+            'name': 'Suncorp'
+        }])
         return sun_td
           
 
@@ -597,6 +602,9 @@ class WebScrapers(object):
                     }
                     bendigo_td.append(long_)
 
+        bendigo_td.append([{
+            'name': 'Bendigo'
+        }])
         return bendigo_td
     
     
@@ -612,14 +620,26 @@ class WebScrapers(object):
             'month': '6',
             'rate': rate
         }]
+
+        citi_td.append([{
+            'name': 'Citibank'
+        }])
         return citi_td
 
 
     def collate_td(self):
-        #anz_td = self.get_anz_td()
-        #comm_td = self.get_comm_td()
+        
+        term_deposits = []
+        
+        anz_td = self.get_anz_td()
+        comm_td = self.get_comm_td()
         #westpac_td = self.get_west_td()
         #nab_td = self.get_nab_td()
+        
+        term_deposits.append(anz_td) 
+        term_deposits.append(comm_td)
+        #term_deposits.append(westpac_td)
+        #term_deposits.append(nab_td)
         #george_td = self.get_george_td()
         #bankwest_td = self.get_bankwest_td()
         #ubank_td = self.get_ubank_td()
@@ -629,7 +649,7 @@ class WebScrapers(object):
         #ing_td = self.get_ing_td()
         #sun_td = self.get_sun_td() 
         #bendigo_td = self.get_bendigo_td()
-        citi_td = self.get_citi_td()
-
-
-        return None
+        #citi_td = self.get_citi_td()
+        
+        
+        return term_deposits
