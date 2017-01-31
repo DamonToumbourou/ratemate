@@ -6,8 +6,8 @@ create table term_deposit (
     short text,
     short_rate text,
     mid text,
-    mid_rate text not null,
+    mid_rate text,
     long text,
-    long_rate text not null,
+    long_rate text,
     date text
 )

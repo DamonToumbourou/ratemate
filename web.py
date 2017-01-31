@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for, g, redirect, session, request, flash
 from scrapers import WebScrapers
+from openpyxl import Workbook
 import os
 import sqlite3
 import time
@@ -57,8 +58,19 @@ def term_deposit():
     db = get_db()
     cur = db.execute('select logo, date, name, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit')
     term_deposit = cur.fetchall()
-    print term_deposit
+     
+    wb = Workbook()
+    ws = wb.active
+    
+    count = 1
+    alp = 'A'
+    for term in term_deposit:
+       print chr(ord(alp)+count)
+       count = count + 1
 
+
+    wb.save('static/test.xlsx')
+ 
     return render_template('term_deposit.html', term_deposit=term_deposit)
 
 
@@ -68,6 +80,8 @@ def add_td():
     results = results.collate_td()
     
     db = get_db()
+    print 'len'
+    print len(results)
     for result in results:
         name = result[3]['name']
         logo = result[3]['logo']
@@ -76,8 +90,18 @@ def add_td():
         mid_day = result[1]['days']
         mid_rate = result[1]['rate']
         long_day = result[2]['days']
-        long_rate = result[2]['days']
+        long_rate = result[2]['rate']
         date = time.strftime('%d/%m/%Y')
+        print name 
+        print logo
+        print short_day
+        print short_rate
+        print mid_day
+        print mid_rate
+        print long_day
+        print long_rate
+        print date
+        print '\n'
 
         db.execute('insert into term_deposit (name, logo, short, short_rate, mid, mid_rate, long, long_rate, date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, short_day, short_rate, mid_day, mid_rate, long_day, long_rate, date])
     

@@ -63,7 +63,7 @@ class WebScrapers(object):
 
         bank = {
             'name': 'CBA',
-            'logo': 'https://static.commsec.com.au/_config/login/image.img.png/1433128787287.png'
+            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png'
         }
         term_comm.append(bank)
         
@@ -101,21 +101,21 @@ class WebScrapers(object):
             if count is 0:
                 short = {
                     'days': '90',
-                    'rate': rates.string
+                    'rate': rates.string.split()[0]
                 }
                 anz_td.append(short)
             
             if count is 2:
                 mid = {
                     'days': '120',
-                    'rate': rates.string
+                    'rate': rates.string.split()[0]
                 }
                 anz_td.append(mid)
 
             if count is 3:
                 long_ = {
                     'days': '360',
-                    'rate': rates.string
+                    'rate': rates.string.split()[0]
                 }
                 anz_td.append(long_)
             """
@@ -166,7 +166,7 @@ class WebScrapers(object):
                 if search.findAll(text=re.compile('3\xa0< 4')):
                     
                     short = { 
-                        'months': '3',
+                        'days': '90',
                         'rate': rate.find_all('td')[4].string
                     }
                     west_td.append(short)
@@ -174,7 +174,7 @@ class WebScrapers(object):
                 if search.findAll(text=re.compile('6\xa0< 7')):
 
                     mid = {
-                        'months': '6',
+                        'days': '180',
                         'rate': rate.find_all('td')[4].string
                     }
                     west_td.append(mid)
@@ -182,15 +182,17 @@ class WebScrapers(object):
                 if search.findAll(text=re.compile('12\xa0< 24')):
                     
                     long_ = {
-                        'months': '12',
+                        'days': '360',
                         'rate': rate.find_all('td')[4].string
                     }
                     west_td.append(long_)
         
-        west_td.append([{
+        bank = {
             'name': 'Westpac',
-            'logo': 'https://www.westpac.com.au/etc/designs/wbc/clientlib-all/favicon.ico'
-        }])
+            'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg'
+        }
+        west_td.append(bank)
+
         return west_td    
 
     
@@ -206,7 +208,7 @@ class WebScrapers(object):
             if '90 days*' == rate.find('td').string:
                 
                 short = {
-                    'months': '3',
+                    'days': '90',
                     'rate': rate.find_all('td')[1].string.split()[0]
                 }
                 nab_td.append(short) 
@@ -214,7 +216,7 @@ class WebScrapers(object):
             if '8 months*' == rate.find('td').string:
                 
                 mid = {
-                    'months': '8',
+                    'days': '240',
                     'rate': rate.find_all('td')[1].string.split()[0]
                 }
                 nab_td.append(mid)
@@ -222,15 +224,17 @@ class WebScrapers(object):
             if '12 months*' == rate.find('td').string:
                 
                 long_ = {
-                    'months': '12',
+                    'days': '360',
                     'rate': rate.find_all('td')[1].string.split()[0]
                 }
                 nab_td.append(long_)
         
-        nab_td.append([{
+        bank = {
             'name': 'NAB',
             'logo': 'https://pbs.twimg.com/profile_images/820753240648130561/tWPXUFde_reasonably_small.jpg'
-        }])
+        }
+        nab_td.append(bank)
+
         return nab_td
 
 
@@ -250,8 +254,8 @@ class WebScrapers(object):
                     found_rate = rate.find_all('td')[6]
                     
                     short = {
-                        'months': '3',
-                        'rate': found_rate.find('span').string
+                        'days': '90',
+                        'rate': found_rate.find('span').string + '%'
                     }
                     george_td.append(short)
                 
@@ -259,8 +263,8 @@ class WebScrapers(object):
                     found_rate = rate.find_all('td')[6]
                     
                     mid = {
-                        'months': '6',
-                        'rate': found_rate.find('span').string
+                        'days': '180',
+                        'rate': found_rate.find('span').string + '%'
                     }
                     george_td.append(mid)
 
@@ -268,15 +272,17 @@ class WebScrapers(object):
                     found_rate = rate.find_all('td')[6]
                     
                     long_ = {
-                        'months': '12',
-                        'rate': found_rate.find('span').string
+                        'days': '360',
+                        'rate': found_rate.find('span').string + '%'
                     }
                     george_td.append(long_)
 
-        goerge_td.append([{
+        bank = {
             'name': 'St George',
-            'logo': 'https://static-s.aa-cdn.net/img/ios/374217099/14ba7f1b9612d79fa95130641dc29e4e'
-        }])
+            'logo': 'https://lh3.googleusercontent.com/-bJWvppmM7qc/AAAAAAAAAAI/AAAAAAAAAIQ/8bilcXY9y5M/s120-c/photo.jpg'
+        }
+        george_td.append(bank)
+
         return george_td
        
     
@@ -291,14 +297,14 @@ class WebScrapers(object):
             
             if '3 months' == rate.find('th').string:
                 short = {
-                    'months': '3',
+                    'days': '90',
                     'rate': rate.find('span').string.split()[0]
                 }
                 bankwest_td.append(short)
             
             if '7 months' == rate.find('th').string:
                 mid = {
-                    'months': '7',
+                    'days': '210',
                     'rate': rate.find('span').string.split()[0]
                 }
                 bankwest_td.append(mid)
@@ -306,14 +312,17 @@ class WebScrapers(object):
             if '12 months' == rate.find('th').string:
                 rat = rate.find_all('span')
                 long_ = {
-                    'months': '12',
+                    'days': '360',
                     'rate': rat[3].string.split()[0]
                 }
                 bankwest_td.append(long_)
         
-        bankwest_td.append([{
-            'name': 'Bankwest'
-        }])
+        bank = {
+            'name': 'Bankwest',
+            'logo': 'https://pbs.twimg.com/profile_images/795871173183578113/jwHcr2Qk_400x400.jpg'
+        }
+        bankwest_td.append(bank)
+        
         return bankwest_td
 
 
@@ -324,8 +333,6 @@ class WebScrapers(object):
         rates = content.find_all('tr')
 
         ubank_td = []
-        standard = []
-        loyalty = []
         for rate in rates:
             found = rate.find('td')
             if found is not None:
@@ -333,52 +340,29 @@ class WebScrapers(object):
                     stand = rate.find_all('td')
                     
                     short = { 
-                        'months': '3',
+                        'days': '90',
                         'rate': stand[1].string
                     }
-                    standard.append(short)
+                    ubank_td.append(short)
                     
                     mid = { 
-                        'months': '6',
+                        'days': '180',
                         'rate': stand[3].string
                     }
-                    standard.append(mid)
+                    ubank_td.append(mid)
                     
                     long_ = { 
-                        'months': '12',
+                        'days': '360',
                         'rate': stand[5].string
                     }
-                    standard.append(long_)
+                    ubank_td.append(long_)
                     
-                if 'UBank - with Loyalty Bonus' in found.string: 
-                    stand = rate.find_all('td')
-                    
-                    short = { 
-                        'months': '3',
-                        'rate': stand[1].string
-                    }
-                    loyalty.append(short)
-                    
-                    mid = { 
-                        'months': '6',
-                        'rate': stand[3].string
-                    }
-                    loyalty.append(mid)
-                    
-                    long_ = { 
-                        'months': '12',
-                        'rate': stand[5].string
-                    }
-                    loyalty.append(long_)
+        bank = {
+            'name': 'UBank standard rate',
+            'logo': 'https://pbs.twimg.com/profile_images/816872981175484416/BwQu6mb-.jpg'
+        }
+        ubank_td.append(bank)
 
-        ubank_td.append([{
-            'standard': standard, 
-            'loyalty': loyalty
-        }])
-        
-        ubank_td.append([{
-            'name': 'UBank'
-        }])
         return ubank_td
     
 
@@ -395,28 +379,31 @@ class WebScrapers(object):
                 
                 if '3 less than 4' in curr:
                     short = {
-                        'months': '3',
-                        'rate' : rate.find_all('td')[3].string
+                        'days': '90',
+                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
                     }
                     boq_td.append(short)
 
                 if '6 less than 7' in curr:
                     mid = {
-                        'months': '6',
-                        'rate' : rate.find_all('td')[3].string
+                        'days': '180',
+                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
                     }
                     boq_td.append(mid)
                  
                 if '12 less than 24' in curr:
                     long_ = {
-                        'months': '12',
-                        'rate' : rate.find_all('td')[3].string
+                        'days': '360',
+                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
                     }
                     boq_td.append(long_)
         
-        boq_td.append([{
-            'name': 'BOQ'
-        }])
+        bank = {
+            'name': 'BOQ',
+            'logo': 'https://pbs.twimg.com/profile_images/458816630949019649/ggOeeSFX_400x400.jpeg'
+        }
+        boq_td.append(bank)
+
         return boq_td
     
 
@@ -433,28 +420,31 @@ class WebScrapers(object):
                 
                 if '3 months' in curr[0].string:
                     short = {
-                        'months': '3',
-                        'rate': curr[1].string.strip()
+                        'days': '90',
+                        'rate': curr[1].string.strip() + '%'
                     }
                     rabo_td.append(short)
                 
                 if '6 months' in curr[0].string:
                     mid = {
-                        'months': '6',
-                        'rate': curr[1].string.strip()
+                        'days': '180',
+                        'rate': curr[1].string.strip() + '%'
                     }
                     rabo_td.append(mid)
                 
                 if '1 year' in curr[0].string:
                     long_ = {
-                        'months': '12',
-                        'rate': curr[5].string.strip()
+                        'days': '360',
+                        'rate': curr[5].string.strip() + '%'
                     }
                     rabo_td.append(long_)
 
-        rabo_td.append([{
-            'name': 'RaboDirect'
-        }])
+        bank = {
+            'name': 'RaboDirect',
+            'logo': 'https://www.rabobank.com/en/images/rabobank-logo68x80.jpg'
+        }
+        rabo_td.append(bank)
+
         return rabo_td
 
      
@@ -473,28 +463,31 @@ class WebScrapers(object):
                 
                 if '3 to less than 4 months' in curr:
                     short = {
-                        'months': '3',
-                        'rate': rate.find('span').string
+                        'days': '90',
+                        'rate': rate.find('span').string + '%'
                     }
                     bom_td.append(short)
                 
                 if '6 to less than 7 months' in curr:
                     mid = {
-                        'months': '6',
-                        'rate': rate.find('span').string
+                        'days': '180',
+                        'rate': rate.find('span').string + '%'
                     }
                     bom_td.append(mid)
 
                 if '12 months' == curr:
                     long_ = {
-                        'months': '12',
-                        'rate': rate.find('span').string
+                        'days': '360',
+                        'rate': rate.find('span').string + '%'
                     }
                     bom_td.append(long_)
         
-        bom_td.append([{
-            'name': 'BOM'
-        }])
+        bank = {
+            'name': 'BOM',
+            'logo': 'https://pbs.twimg.com/profile_images/617918130505908225/NxsY5iOB.jpg'
+        }
+        bom_td.append(bank)
+        
         return bom_td
 
     
@@ -511,34 +504,31 @@ class WebScrapers(object):
             
             if '90 day rate' in curr: 
                 short = {
-                    'months': '3',
-                    'rate': rate.find('span').string
+                    'days': '90',
+                    'rate': rate.find('span').string + '%'
                 }
                 ing_td.append(short)
 
             if '210 day rate' in curr:
                 mid = {
-                    'months': '7',
-                    'rate': rate.find('span').string
+                    'days': '210',
+                    'rate': rate.find('span').string + '%'
                 }
                 ing_td.append(mid)
 
             if '1 year rate' in curr:
                 long_ = {
-                    'months': '12',
-                    'rate': rate.find('span').string
+                    'days': '360',
+                    'rate': rate.find('span').string + '%'
                 }
                 ing_td.append(long_)
         
-        note = {
-            'note': 'loyalty bonus +.10',
-            'interest': 'on maturity'
+        bank = {
+            'name': 'ING Direct',
+            'logo': 'http://investukraine.net/wordpress/wp-content/uploads/2016/08/ing.jpeg'
         }
+        ing_td.append(bank)
         
-        ing_td.append(note)
-        ing_td.append([{
-            'name': 'ING Direct'
-        }])
         return ing_td
      
 
@@ -550,21 +540,24 @@ class WebScrapers(object):
         rates = soup.find_all('span', {'class': 'rate'})
     
         sun_td = [{
-            'months': '3',
+            'days': '90',
             'rate': rates[0].string
         },
         {
-            'months': '6',
+            'days': '180',
             'rate': rates[1].string
         },
         {
-            'months': '12',
+            'days': '360',
             'rate': rates[2].string
         }]    
         
-        sun_td.append([{
-            'name': 'Suncorp'
-        }])
+        bank = {
+            'name': 'Suncorp',
+            'logo': 'http://www.kingsleysoccerclub.com/images/suncorplogo.png'
+        }
+        sun_td.append(bank)
+
         return sun_td
           
 
@@ -583,28 +576,31 @@ class WebScrapers(object):
                 
                 if '3 Months' == curr.string:
                     short = {
-                        'months': '3',
+                        'days': '90',
                         'rate': curr_rate[1].string
                     }
                     bendigo_td.append(short)
                 
                 if '6 Months' == curr.string:
                     mid = {
-                        'months': '6',
+                        'days': '180',
                         'rate': curr_rate[1].string
                     }
                     bendigo_td.append(mid)
                 
                 if '12 Months' == curr.string:
                     long_ = {
-                        'months': '12',
+                        'days': '360',
                         'rate': curr_rate[1].string
                     }
                     bendigo_td.append(long_)
 
-        bendigo_td.append([{
-            'name': 'Bendigo'
-        }])
+        bank = {
+            'name': 'Bendigo',
+            'logo': 'https://www.communities.bendigobank.com.au/__data/assets/image/0025/19816/BendigoBanklogo.png'
+        }
+        bendigo_td.append(bank)
+
         return bendigo_td
     
     
@@ -617,13 +613,24 @@ class WebScrapers(object):
         rate = rate.split('<')[0].split()[0]
         
         citi_td = [{
-            'month': '6',
+            'days': '90',
+            'rate': None
+        },
+        {
+            'days': 180,
             'rate': rate
-        }]
+        },
+        {
+            'days': 360,
+            'rate': None
+        } ]
 
-        citi_td.append([{
-            'name': 'Citibank'
-        }])
+        bank = {
+            'name': 'Citibank',
+            'logo': 'http://www.ipepalau.com/wp-content/uploads/2011/01/Citibank-Thumbnail.png'
+        }
+        citi_td.append(bank)
+
         return citi_td
 
 
@@ -633,23 +640,33 @@ class WebScrapers(object):
         
         anz_td = self.get_anz_td()
         comm_td = self.get_comm_td()
-        #westpac_td = self.get_west_td()
-        #nab_td = self.get_nab_td()
-        
+        westpac_td = self.get_west_td()
+        nab_td = self.get_nab_td()
+        george_td = self.get_george_td()
+        bankwest_td = self.get_bankwest_td()
+        ubank_td = self.get_ubank_td()
+        boq_td = self.get_boq_td()
+        rabo_td = self.get_rabo_td()
+        bom_td = self.get_bom_td()
+        ing_td = self.get_ing_td()
+        sun_td = self.get_sun_td() 
+        bendigo_td = self.get_bendigo_td()
+        citi_td = self.get_citi_td()
+
         term_deposits.append(anz_td) 
         term_deposits.append(comm_td)
-        #term_deposits.append(westpac_td)
-        #term_deposits.append(nab_td)
-        #george_td = self.get_george_td()
-        #bankwest_td = self.get_bankwest_td()
-        #ubank_td = self.get_ubank_td()
-        #boq_td = self.get_boq_td()
-        #rabo_td = self.get_rabo_td()
-        #bom_td = self.get_bom_td()
-        #ing_td = self.get_ing_td()
-        #sun_td = self.get_sun_td() 
-        #bendigo_td = self.get_bendigo_td()
-        #citi_td = self.get_citi_td()
+        term_deposits.append(westpac_td)
+        term_deposits.append(nab_td)
+        term_deposits.append(george_td) 
+        term_deposits.append(bankwest_td)
+        term_deposits.append(ubank_td)
+        term_deposits.append(boq_td)
+        term_deposits.append(rabo_td) 
+        term_deposits.append(bom_td)
+        term_deposits.append(ing_td)
+        term_deposits.append(sun_td)
+        term_deposits.append(bendigo_td) 
+        term_deposits.append(citi_td)
         
         
         return term_deposits
