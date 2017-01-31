@@ -63,10 +63,12 @@ def term_deposit():
     ws = wb.active
     
     count = 1
-    alp = 'A'
+    alpha = 'A'
     for term in term_deposit:
-       print chr(ord(alp)+count)
-       count = count + 1
+        ws['A1'] = term[1]
+        ws['A2'] = 
+        
+        count = count + 1
 
 
     wb.save('static/test.xlsx')

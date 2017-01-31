@@ -1,3 +1,7 @@
+/static/*.xlsx
+*.xlsx
+.xlsx
+test.xlsx
 *.pyc
 *.pyq
 *.pyo
