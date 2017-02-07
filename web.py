@@ -61,15 +61,41 @@ def term_deposit():
      
     wb = Workbook()
     ws = wb.active
-    
+     
     count = 1
-    alpha = 'A'
+    col_2_2nd = 'A'
+    col_2 = 'C'
+    col_3_2nd = 'B'
+    col_3 = 'D'
+    new_count = 0
+    new_count_3 = 1
     for term in term_deposit:
-        ws['A1'] = term[1]
-        ws['A2'] = 
-        
-        count = count + 1
+        ws['A2'] = term[1] # date 
+        ws['B2'] = 'Short term' 
+        ws['B3'] = 'Mid term'
+        ws['B4'] = 'Long term'
+        ws[ col_2 + '1'] = term[2] # bank name
+        ws[ col_2 + '2'] = int(term[3]) # days short
+        ws[ col_2 + '3'] = int(term[5]) # days mid 
+        ws[ col_2 + '4'] = int(term[7]) # days long
 
+        if term[4]:
+            print col_3
+            ws[ col_3 + '2'] = float(term[4].strip('%')) # rate short
+            ws[ col_3 + '3'] = float(term[6].strip('%')) # rate short
+            ws[ col_3 + '4'] = float(term[8].strip('%')) # rate short
+
+        count = count + 3
+         
+        if count <= 23:
+            col_2 = chr(ord(col_2) + 3)
+            col_3 = chr(ord(col_3) + 3)
+
+        if count >= 24:
+            col_2 = 'A' + chr(ord(col_2_2nd) + (new_count))
+            col_2 = 'A' + chr(ord(col_3_2nd) + (new_count_3))
+            
+            new_count = new_count + 3
 
     wb.save('static/test.xlsx')
  
