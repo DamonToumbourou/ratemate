@@ -3,7 +3,7 @@ from scrapers import WebScrapers
 from openpyxl import Workbook
 import os
 import sqlite3
-import time
+import datetime
 
 app = Flask(__name__)
 app.config.from_object(__name__) 
@@ -80,7 +80,6 @@ def term_deposit():
         ws[ col_2 + '4'] = int(term[7]) # days long
 
         if term[4]:
-            print col_3
             ws[ col_3 + '2'] = float(term[4].strip('%')) # rate short
             ws[ col_3 + '3'] = float(term[6].strip('%')) # rate short
             ws[ col_3 + '4'] = float(term[8].strip('%')) # rate short
@@ -102,41 +101,76 @@ def term_deposit():
     return render_template('term_deposit.html', term_deposit=term_deposit)
 
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET'])
 def add_td():
-    results = WebScrapers()
-    results = results.collate_td()
     
     db = get_db()
-    print 'len'
-    print len(results)
-    for result in results:
-        name = result[3]['name']
-        logo = result[3]['logo']
-        short_day = result[0]['days']
-        short_rate = result[0]['rate']
-        mid_day = result[1]['days']
-        mid_rate = result[1]['rate']
-        long_day = result[2]['days']
-        long_rate = result[2]['rate']
-        date = time.strftime('%d/%m/%Y')
-        print name 
-        print logo
-        print short_day
-        print short_rate
-        print mid_day
-        print mid_rate
-        print long_day
-        print long_rate
-        print date
-        print '\n'
-
-        db.execute('insert into term_deposit (name, logo, short, short_rate, mid, mid_rate, long, long_rate, date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, short_day, short_rate, mid_day, mid_rate, long_day, long_rate, date])
+    db = db.execute('select date from term_deposit')
+    dates = db.fetchall()
+    uptodate = False
+    # if db None
+    if not dates:
+        if get_write_td():
+            print 'get_write_td'
+    # if not None check when last scraped
+    else:
+        today = datetime.datetime.now() 
+        seven_days_ago = datetime.datetime
+        
+        for date in dates:
+            if seven_days_ago > date:
+                print 'TDs have been scraped in the last 7 days... not scraping' 
+                uptodate = True
+            else:
+                print 'TDs have not been scraped in the last 7 days... scraping TDs'
+                if get_write_td():
+                    print 'Successfuly scraped'
+                    flash('TDs have been updated')
+                else:
+                    print 'Error scraping'
+                    flash('There has been an error scraping TDs')
     
-    db.commit()
-    flash('Database updated')
+    if uptodate:
+        flash('TDs have already been updated within the last 7 days')
 
     return redirect(url_for('term_deposit'))
+
+
+def get_write_td():
+    results = WebScrapers()
+    results = results.collate_td()
+
+    db_write = get_db()
+    for result in results:
+        print '******************'
+        print results
+        print '******************'
+
+        name = result[3]['name']
+        print 'name'
+        print name
+        logo = result[3]['logo']
+        short_day = result[0]['days']
+        print 'short_day'
+        print short_day
+        short_rate = result[0]['rate']
+        print 'short_rate'
+        print short_rate
+        mid_day = result[1]['days']
+        print mid_day
+        mid_rate = result[1]['rate']
+        print mid_rate
+        long_day = result[2]['days']
+        print long_day
+        long_rate = result[2]['rate']
+        print long_rate
+        date = datetime.datetime.now()
+        print date
+
+        db_write.execute('insert into term_deposit (name, logo, short, short_rate, mid, mid_rate, long, long_rate, date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, short_day, short_rate, mid_day, mid_rate, long_day, long_rate, date])
+        db_write.commit()
+    
+    return True
 
 
 if __name__ == "__main__":

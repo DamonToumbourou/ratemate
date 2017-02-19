@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup as bs4
 from requests import get
 from selenium import webdriver
+from flask import flash
 import requests
 import time
 import re
@@ -70,7 +71,7 @@ class WebScrapers(object):
         return term_comm
 
     
-    def get_anz_td(self):
+    def get_anz_advanced_td(self):
         """
         anz_td = [{
             'standard': [
@@ -118,28 +119,7 @@ class WebScrapers(object):
                     'rate': rates.string.split()[0]
                 }
                 anz_td.append(long_)
-            """
-            if count is 4:
-                short = {
-                    'months': '3',
-                    'rate': rates.string
-                }
-                standard.append(short)
-
-            if count is 6:
-                mid = {
-                    'months': '6',
-                    'rate': rates.string
-                }
-                standard.append(mid)
-
-            if count is 7:
-                long_ = {
-                    'months': '12',
-                    'rate': rates.string
-                }
-                standard.append(long_)
-            """
+            
             count = count + 1
             
         bank = { 
@@ -150,6 +130,66 @@ class WebScrapers(object):
 
         return anz_td
     
+    
+    def get_anz_standard_td(self):
+        """
+        anz_td = [{
+            'standard': [
+                'short': {
+                    'days': days,
+                    'rate': rate,
+                }
+                'mid': {
+                    'days': days,
+                    'rate': rate,
+                }
+                'long': {
+                    'days': days,
+                    'rate' rate,
+                }
+            },
+        """
+        url = 'https://www.anz.com.au/personal/bank-accounts/compare/term-deposits'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        content = soup.find_all('span', {'data-subsection': 'ANTD'})
+        
+        count = 0
+        #anz_td = []
+        for rates in content:
+            
+            if count is 4:
+                short = {
+                    'days': '90',
+                    'rate': rates.string.split()[0]
+                }
+                anz_td.append(short)
+
+            if count is 6:
+                mid = {
+                    'days': '180',
+                    'rate': rates.string.split()[0]
+                }
+                anz_td.append(mid)
+
+            if count is 7:
+                long_ = {
+                    'days': '360',
+                    'rate': rates.string.split()[0]
+                }
+                anz_td.append(long_)
+            
+            count = count + 1
+            
+        bank = { 
+            'name': 'ANZ Standard',
+            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg'
+        }
+        anz_td.append(bank)
+
+        return anz_td
+
 
     def get_west_td(self):
         url = 'https://www.westpac.com.au/personal-banking/bank-accounts/term-deposit/'
@@ -244,14 +284,15 @@ class WebScrapers(object):
         browser.get(url)
         soup = bs4(browser.page_source, 'html.parser')
         rates = soup.find_all('tr')
-        
+         
         george_td = []
+        
         for rate in rates[0:15]:
             found = rate.find('td')
             if found is not None:
                 
                 if '3 to less than 4' in found.string:
-                    found_rate = rate.find_all('td')[6]
+                    found_rate = rate.find_all('td')[5]
                     
                     short = {
                         'days': '90',
@@ -260,7 +301,7 @@ class WebScrapers(object):
                     george_td.append(short)
                 
                 if '6 to less than 7' in found.string:
-                    found_rate = rate.find_all('td')[6]
+                    found_rate = rate.find_all('td')[5]
                     
                     mid = {
                         'days': '180',
@@ -269,7 +310,7 @@ class WebScrapers(object):
                     george_td.append(mid)
 
                 if '12 months' == found.string:
-                    found_rate = rate.find_all('td')[6]
+                    found_rate = rate.find_all('td')[5]
                     
                     long_ = {
                         'days': '360',
@@ -336,7 +377,7 @@ class WebScrapers(object):
         for rate in rates:
             found = rate.find('td')
             if found is not None:
-                if 'UBank - Standard rate' in found.string: 
+                if 'UBank - with Loyalty Bonus' in found.string: 
                     stand = rate.find_all('td')
                     
                     short = { 
@@ -358,7 +399,7 @@ class WebScrapers(object):
                     ubank_td.append(long_)
                     
         bank = {
-            'name': 'UBank standard rate',
+            'name': 'UBank Loyalty Bonus',
             'logo': 'https://pbs.twimg.com/profile_images/816872981175484416/BwQu6mb-.jpg'
         }
         ubank_td.append(bank)
@@ -375,26 +416,27 @@ class WebScrapers(object):
         boq_td = []
         for rate in rates:
             curr = rate.find('td').string
+            
             if curr is not None:
                 
                 if '3 less than 4' in curr:
                     short = {
                         'days': '90',
-                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
+                        'rate' : rate.find_all('td')[3].string.split('*')[0] + '%'
                     }
                     boq_td.append(short)
 
                 if '6 less than 7' in curr:
                     mid = {
                         'days': '180',
-                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
+                        'rate' : rate.find_all('td')[3].string.split('*')[0] + '%'
                     }
                     boq_td.append(mid)
                  
                 if '12 less than 24' in curr:
                     long_ = {
                         'days': '360',
-                        'rate' : rate.find_all('td')[3].string.replace('*', '%')
+                        'rate' : rate.find_all('td')[3].string.split('*')[0] + '%'
                     }
                     boq_td.append(long_)
         
@@ -487,7 +529,7 @@ class WebScrapers(object):
             'logo': 'https://pbs.twimg.com/profile_images/617918130505908225/NxsY5iOB.jpg'
         }
         bom_td.append(bank)
-        
+
         return bom_td
 
     
@@ -614,7 +656,7 @@ class WebScrapers(object):
         
         citi_td = [{
             'days': '90',
-            'rate': None
+            'rate': ''
         },
         {
             'days': 180,
@@ -622,7 +664,7 @@ class WebScrapers(object):
         },
         {
             'days': 360,
-            'rate': None
+            'rate': ''
         } ]
 
         bank = {
@@ -638,35 +680,97 @@ class WebScrapers(object):
         
         term_deposits = []
         
-        anz_td = self.get_anz_td()
-        comm_td = self.get_comm_td()
-        westpac_td = self.get_west_td()
-        nab_td = self.get_nab_td()
-        george_td = self.get_george_td()
-        bankwest_td = self.get_bankwest_td()
-        ubank_td = self.get_ubank_td()
-        boq_td = self.get_boq_td()
-        rabo_td = self.get_rabo_td()
-        bom_td = self.get_bom_td()
-        ing_td = self.get_ing_td()
-        sun_td = self.get_sun_td() 
-        bendigo_td = self.get_bendigo_td()
-        citi_td = self.get_citi_td()
+        print 'fetching rates for ANZ Standard...'
+        try:
+            anz_standard_td = self.get_anz_standard_td()
+            term_deposit.append(anz_standard_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+        
 
-        term_deposits.append(anz_td) 
-        term_deposits.append(comm_td)
-        term_deposits.append(westpac_td)
-        term_deposits.append(nab_td)
-        term_deposits.append(george_td) 
-        term_deposits.append(bankwest_td)
+        print 'fetching rates for ANZ Advanced Notice...'
+        try:
+            print 'Success :-)'
+            anz_advanced_td = self.get_anz_advanced_td()
+            term_deposit.append(anz_advanced_td)
+        else:
+            print 'Failed :-('
+            
+
+        print 'fetching rates for Commonwealth Bank...'
+        try:
+            comm_td = self.get_comm_td()
+            term_deposit.append(comm_td)
+            print 'Success :-)'
+        else:
+            print 'Failed :-('
+
+        print 'fetching rates for Westpac...'
+        try:
+            westpac_td = self.get_west_td()
+            term_deposit.append(westpac)
+            print 'Success :-)'
+        else:
+            print 'Failed :-('
+        
+
+        print 'fetching rates for NAB...'
+        try:
+            nab_td = self.get_nab_td()
+            term_deposit.append(nab_td)
+            print 'Success :-)'
+        else: 
+            print 'Failed :-('
+
+
+        print 'fetching rates for St George...'
+        try:
+            george_td = self.get_george_td()
+            term_deposit.append(george_td)
+            print 'Success :-)'
+        else:
+            print 'Failed :-('
+
+        
+        print 'fetching rates for Bank West...'
+        try:
+            bankwest_td = self.get_bankwest_td()
+            term_deposit.append(bankwest_td)
+        else:
+
+        
+        print 'fetching rates for UBank...'
+        ubank_td = self.get_ubank_td()
+        print 'fetching rates for Bank of Queensland...'
+        boq_td = self.get_boq_td()
+        print 'fetching rates for Rabo Direct...'
+        #rabo_td = self.get_rabo_td()
+        print 'fetching rates for Bank of Melbourne...'
+        #bom_td = self.get_bom_td()
+        print 'fetching rates for ING...'
+        #ing_td = self.get_ing_td()
+        print 'fetching rates for Suncorp...'
+        #sun_td = self.get_sun_td() 
+        print 'fetching rates for Bendigo Bank...'
+        #bendigo_td = self.get_bendigo_td()
+        print 'fetching rates for CitiBank...'
+        #citi_td = self.get_citi_td()
+
+        #term_deposits.append(anz_advanced_td)
+        #term_deposits.append(comm_td)
+        #term_deposits.append(westpac_td)
+        #term_deposits.append(nab_td)
+        #term_deposits.append(george_td) 
+        #term_deposits.append(bankwest_td)
         term_deposits.append(ubank_td)
         term_deposits.append(boq_td)
-        term_deposits.append(rabo_td) 
-        term_deposits.append(bom_td)
-        term_deposits.append(ing_td)
-        term_deposits.append(sun_td)
-        term_deposits.append(bendigo_td) 
-        term_deposits.append(citi_td)
-        
-        
+        #term_deposits.append(rabo_td) 
+        #term_deposits.append(bom_td)
+        #term_deposits.append(ing_td)
+        #term_deposits.append(sun_td)
+        #term_deposits.append(bendigo_td) 
+        #term_deposits.append(citi_td)
+        flash('Rates have been successfuly updated!')
+
         return term_deposits
