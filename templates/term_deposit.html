@@ -7,7 +7,7 @@
             
             <div class="col-lg-12">
             
-                <h3 class="page-header"><i class="fa fa-laptop"></i> Term Deposits</h3>
+                <h2 class="page-header"><i class="fa fa-laptop"></i> Term Deposits</h2>
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
                 </a>
@@ -23,7 +23,39 @@
                     {% endif %}
                 {% endwith %}
                 <hr>
+                
 
+                <!-- Best Rate Widgets Top-->   
+                <h3 class="page-header"> Highest Rates</h3>
+                <div class="row">
+		    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+			<div class="info-box blue-bg">
+                            <i><img src="{{ highest[0][0].short_logo }}" style="width:82px; height:82px"></i>
+                            <div class="count">{{ highest[0][0].short_rate }}%</div>
+			    <div class="title">Short Term</div>                        
+			</div><!--/.info-box-->            
+		    </div><!--/.col-->
+		    
+		    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+			<div class="info-box brown-bg">
+                            <i><img src="{{ highest[0][0].mid_logo }}" style="width:82px; height:82px"></i>
+                            <div class="count">{{ highest[0][0].mid_rate }}%</div>
+			    <div class="title">Mid Term</div>                        
+			</div><!--/.info-box-->            
+		    </div><!--/.col-->    
+		    
+		    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+			<div class="info-box dark-bg">
+                            <i><img src="{{ highest[0][0].long_logo }}" style="width:82px; height: 82px"></i>
+                            <div class="count">{{ highest[0][0].long_rate }}%</div>
+			    <div class="title">Long Term</div>                        
+			</div><!--/.info-box-->            
+		    </div><!--/.col-->
+		    
+		</div><!--/.row--> 
+
+                
+                <!-- Table for all Term Deposit Rates-->
                	<div class="row">
                     <div class="col-lg-12">
                         <section class="panel">
@@ -50,12 +82,12 @@
                                     <tr>
                                         <th><img src="{{ term.logo }}" width="42" height="42"></th>
                                         <th style="color: black">{{ term.name }}</th>
-                                        <th style="color: #FED189">{{ term.short }}</th>
-                                        <th style="color: #FED189">{{ term.short_rate }}</th>
-                                        <th style="color: #00A0DF">{{ term.mid }}</th>
-                                        <th style="color: #00A0DF">{{ term.mid_rate }}</th>
-                                        <th style="color: #B30000">{{ term.long }}</th>
-                                        <th style="color: #B30000">{{ term.long_rate }}</th>
+                                        <th style="color: #57889c">{{ term.short }}</th>
+                                        <th style="color: #57889c">{{ term.short_rate }}</th>
+                                        <th style="color: #d1b993">{{ term.mid }}</th>
+                                        <th style="color: #d1b993">{{ term.mid_rate }}</th>
+                                        <th style="color: #1a2732">{{ term.long }}</th>
+                                        <th style="color: #1a2732">{{ term.long_rate }}</th>
 
                                   </tr>
                                 {% endfor %}

@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for, g, redirect, session, request, flash
 from scrapers import WebScrapers
 from openpyxl import Workbook
+from db_handlers import DB_Tools
+import private
 import os
 import sqlite3
 import datetime
@@ -10,9 +12,9 @@ app.config.from_object(__name__)
 
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'ratemate.db'),
-    SECRET_KEY='development key',
+    SECRET_KEY=private.secret_key,
     USERNAME='admin',
-    PASSSWORD='default'
+    PASSSWORD=private.password
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
@@ -22,18 +24,17 @@ def connect_db():
     rv.row_factory = sqlite3.Row
     return rv
 
-
 def get_db():
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
     return g.sqlite_db
-
 
 def init_db():
     db = get_db()
     with app.open_resource('schema.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
+
 
 @app.cli.command('initdb')
 def initdb_command():
@@ -97,8 +98,10 @@ def term_deposit():
             new_count = new_count + 3
 
     wb.save('static/test.xlsx')
- 
-    return render_template('term_deposit.html', term_deposit=term_deposit)
+    
+    highest =  get_highest_td()
+    
+    return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest)
 
 
 @app.route('/add', methods=['GET'])
@@ -131,7 +134,7 @@ def add_td():
                     flash('There has been an error scraping TDs')
     
     if uptodate:
-        flash('TDs have already been updated within the last 7 days')
+        flash('Rates are already up to date!')
 
     return redirect(url_for('term_deposit'))
 
@@ -142,36 +145,66 @@ def get_write_td():
 
     db_write = get_db()
     for result in results:
-        print '******************'
-        print results
-        print '******************'
-
         name = result[3]['name']
-        print 'name'
-        print name
         logo = result[3]['logo']
         short_day = result[0]['days']
-        print 'short_day'
-        print short_day
         short_rate = result[0]['rate']
-        print 'short_rate'
-        print short_rate
         mid_day = result[1]['days']
-        print mid_day
         mid_rate = result[1]['rate']
-        print mid_rate
         long_day = result[2]['days']
-        print long_day
         long_rate = result[2]['rate']
-        print long_rate
         date = datetime.datetime.now()
-        print date
 
         db_write.execute('insert into term_deposit (name, logo, short, short_rate, mid, mid_rate, long, long_rate, date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, short_day, short_rate, mid_day, mid_rate, long_day, long_rate, date])
         db_write.commit()
     
     return True
 
+
+def get_highest_td():
+    db = get_db()
+    db = db.execute('select name, logo, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit')
+    terms = db.fetchall()
+
+    short = 0
+    mid = 0
+    _long = 0 
+    highest = []
+    for term in terms:
+        
+        cur_short = term['short_rate'].strip('%')
+        if short < cur_short: 
+            short_name = term['name']
+            short = cur_short
+            short_logo = term['logo']
+            
+        cur_mid = term['mid_rate'].strip('%')
+        if mid < cur_mid:
+            mid_name = term['name']
+            mid = cur_mid
+            mid_logo = term['logo']
+
+        cur_long = term['long_rate'].strip('%')
+        if _long < cur_long:
+            long_name = term['name']
+            _long = cur_long
+            long_logo = term['logo']
+
+    highest.append([{
+        'short_rate': short,
+        'short_name': short_name,
+        'short_logo': short_logo,
+        'mid_rate': mid,
+        'mid_name': mid_name,
+        'mid_logo': mid_logo,
+        'long_rate': _long,
+        'long_name': long_name,
+        'long_logo': long_logo
+    }])
+    
+    return highest
+
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

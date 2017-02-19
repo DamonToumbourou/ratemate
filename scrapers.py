@@ -156,7 +156,7 @@ class WebScrapers(object):
         content = soup.find_all('span', {'data-subsection': 'ANTD'})
         
         count = 0
-        #anz_td = []
+        anz_td = []
         for rates in content:
             
             if count is 4:
@@ -232,7 +232,8 @@ class WebScrapers(object):
             'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg'
         }
         west_td.append(bank)
-
+        print 'westpac'
+        print west_td
         return west_td    
 
     
@@ -678,8 +679,8 @@ class WebScrapers(object):
 
     def collate_td(self):
         
-        term_deposits = []
-        
+        term_deposit = []
+         
         print 'fetching rates for ANZ Standard...'
         try:
             anz_standard_td = self.get_anz_standard_td()
@@ -688,89 +689,119 @@ class WebScrapers(object):
         except:
             print 'Failed :-('
         
-
         print 'fetching rates for ANZ Advanced Notice...'
         try:
             print 'Success :-)'
             anz_advanced_td = self.get_anz_advanced_td()
             term_deposit.append(anz_advanced_td)
-        else:
+        except:
             print 'Failed :-('
-            
 
         print 'fetching rates for Commonwealth Bank...'
         try:
             comm_td = self.get_comm_td()
             term_deposit.append(comm_td)
             print 'Success :-)'
-        else:
+        except:
             print 'Failed :-('
-
+        
         print 'fetching rates for Westpac...'
         try:
             westpac_td = self.get_west_td()
-            term_deposit.append(westpac)
+            term_deposit.append(westpac_td)
             print 'Success :-)'
-        else:
+        except:
             print 'Failed :-('
-        
-
+    
         print 'fetching rates for NAB...'
         try:
             nab_td = self.get_nab_td()
             term_deposit.append(nab_td)
             print 'Success :-)'
-        else: 
+        except: 
             print 'Failed :-('
-
 
         print 'fetching rates for St George...'
         try:
             george_td = self.get_george_td()
             term_deposit.append(george_td)
             print 'Success :-)'
-        else:
+        except:
             print 'Failed :-('
-
         
         print 'fetching rates for Bank West...'
         try:
             bankwest_td = self.get_bankwest_td()
             term_deposit.append(bankwest_td)
-        else:
-
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
         
-        print 'fetching rates for UBank...'
-        ubank_td = self.get_ubank_td()
-        print 'fetching rates for Bank of Queensland...'
-        boq_td = self.get_boq_td()
-        print 'fetching rates for Rabo Direct...'
-        #rabo_td = self.get_rabo_td()
-        print 'fetching rates for Bank of Melbourne...'
-        #bom_td = self.get_bom_td()
-        print 'fetching rates for ING...'
-        #ing_td = self.get_ing_td()
-        print 'fetching rates for Suncorp...'
-        #sun_td = self.get_sun_td() 
-        print 'fetching rates for Bendigo Bank...'
-        #bendigo_td = self.get_bendigo_td()
-        print 'fetching rates for CitiBank...'
-        #citi_td = self.get_citi_td()
 
-        #term_deposits.append(anz_advanced_td)
-        #term_deposits.append(comm_td)
-        #term_deposits.append(westpac_td)
-        #term_deposits.append(nab_td)
-        #term_deposits.append(george_td) 
-        #term_deposits.append(bankwest_td)
-        term_deposits.append(ubank_td)
-        term_deposits.append(boq_td)
-        #term_deposits.append(rabo_td) 
-        #term_deposits.append(bom_td)
-        #term_deposits.append(ing_td)
-        #term_deposits.append(sun_td)
-        #term_deposits.append(bendigo_td) 
-        #term_deposits.append(citi_td)
+        print 'fetching rates for UBank...'
+        try:
+            ubank_td = self.get_ubank_td()
+            term_deposit.append(ubank_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+
+        print 'fetching rates for Bank of Queensland...'
+        try:
+            boq_td = self.get_boq_td()
+            term_deposit.append(boq_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+        
+        print 'fetching rates for Rabo Direct...'
+        try:
+            rabo_td = self.get_rabo_td()
+            term_deposit.append(rabo_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+                
+        print 'fetching rates for Bank of Melbourne...'
+        try:
+            bom_td = self.get_bom_td()
+            term_deposit.append(bom_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+
+        print 'fetching rates for ING...'
+        try:
+            ing_td = self.get_ing_td()
+            term_deposit.append(ing_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+
+        print 'fetching rates for Suncorp...'
+        try:
+            sun_td = self.get_sun_td() 
+            term_deposit.append(sun_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+        
+        print 'fetching rates for Bendigo Bank...'
+        try:
+            bendigo_td = self.get_bendigo_td()
+            term_deposit.append(bendigo_td)
+            print 'Success :-)'
+        except: 
+            print 'Failed :-('
+        
+        print 'fetching rates for CitiBank...'
+        try:    
+            citi_td = self.get_citi_td()
+            term_deposit.append(citi_td)
+            print 'Success :-)'
+        except:
+            print 'Failed :-('
+        
         flash('Rates have been successfuly updated!')
 
-        return term_deposits
+        return term_deposit
