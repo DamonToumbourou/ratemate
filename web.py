@@ -5,7 +5,8 @@ from db_handlers import DB_Tools
 import private
 import os
 import sqlite3
-import datetime
+from datetime import datetime, timedelta
+import time
 
 app = Flask(__name__)
 app.config.from_object(__name__) 
@@ -57,7 +58,10 @@ def home():
 @app.route('/term_deposit')
 def term_deposit():
     db = get_db()
-    cur = db.execute('select logo, date, name, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit')
+    now = time.time()
+    time_past = now - 4000
+
+    cur = db.execute('select logo, date, name, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit WHERE date BETWEEN ' + str(time_past) + ' AND ' + str(now) )
     term_deposit = cur.fetchall()
      
     wb = Workbook()
@@ -100,41 +104,45 @@ def term_deposit():
     wb.save('static/test.xlsx')
     
     highest =  get_highest_td()
-    
-    return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest)
+    top_4_td = get_top_4_td()
+
+    return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest, top_4_td=top_4_td)
 
 
 @app.route('/add', methods=['GET'])
 def add_td():
     
     db = get_db()
-    db = db.execute('select date from term_deposit')
+    db = db.execute('select CAST(date AS float) from term_deposit')
     dates = db.fetchall()
-    uptodate = False
-    # if db None
+    uptodate = True
+    
+    # if td db is empty
     if not dates:
         if get_write_td():
-            print 'get_write_td'
-    # if not None check when last scraped
-    else:
-        today = datetime.datetime.now() 
-        seven_days_ago = datetime.datetime
-        
-        for date in dates:
-            if seven_days_ago > date:
-                print 'TDs have been scraped in the last 7 days... not scraping' 
-                uptodate = True
-            else:
-                print 'TDs have not been scraped in the last 7 days... scraping TDs'
-                if get_write_td():
-                    print 'Successfuly scraped'
-                    flash('TDs have been updated')
-                else:
-                    print 'Error scraping'
-                    flash('There has been an error scraping TDs')
+            print 'DB empty... fetching TDs'
+    
+    # if DB has entries then check if has been scraped in the last 24hours
+    seconds_2min = 120
+    seconds_day = 86400
+    now = time.time()
+    time_past = now - seconds_day
+
+    for date in dates:
+        if time_past < date[0]:
+            uptodate = False
+            date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
     
     if uptodate:
-        flash('Rates are already up to date!')
+        try:
+            get_write_td()
+            flash('Database updated...')
+        except:
+            flash('Database update failed')
+    
+    if not uptodate:
+        flash('Database is up to date. Last scraped: ')
+        flash(date_scraped)
 
     return redirect(url_for('term_deposit'))
 
@@ -153,7 +161,7 @@ def get_write_td():
         mid_rate = result[1]['rate']
         long_day = result[2]['days']
         long_rate = result[2]['rate']
-        date = datetime.datetime.now()
+        date = time.time()
 
         db_write.execute('insert into term_deposit (name, logo, short, short_rate, mid, mid_rate, long, long_rate, date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, short_day, short_rate, mid_day, mid_rate, long_day, long_rate, date])
         db_write.commit()
@@ -163,7 +171,11 @@ def get_write_td():
 
 def get_highest_td():
     db = get_db()
-    db = db.execute('select name, logo, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit')
+    now = time.time()
+    # adjust time depending on scrap distance
+    time_past = now - 6000
+
+    db = db.execute('SELECT name, logo, short, short_rate, mid, mid_rate, long, long_rate, date FROM term_deposit WHERE date BETWEEN ' + str(time_past) + ' AND ' + str(now) )
     terms = db.fetchall()
 
     short = 0
@@ -204,7 +216,22 @@ def get_highest_td():
     
     return highest
 
+
+def get_top_4_td():
+    # adjust time depending on scrap distance
+    now = time.time()
+    time_past = now - 4000
+
+    db = get_db()
+    now = time.time()
+    db = db.execute('''SELECT name, short, short_rate, date FROM term_deposit WHERE( date BETWEEN ''' + str(time_past) + ''' AND ''' + str(now) + ''' ) AND ( name LIKE '%CBA%' OR name LIKE '%westpac%' OR name LIKE '%NAB%' OR name LIKE '%ANZ Advanced%' )''')
     
+    terms = db.fetchall()
+    print 'top 4' 
+    for term in terms: 
+        print term
+        print '\n'
+
 
 if __name__ == "__main__":
     app.run(debug=True)

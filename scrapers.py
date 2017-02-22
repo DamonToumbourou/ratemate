@@ -657,7 +657,7 @@ class WebScrapers(object):
         
         citi_td = [{
             'days': '90',
-            'rate': ''
+            'rate': '0'
         },
         {
             'days': 180,
@@ -665,7 +665,7 @@ class WebScrapers(object):
         },
         {
             'days': 360,
-            'rate': ''
+            'rate': '0'
         } ]
 
         bank = {

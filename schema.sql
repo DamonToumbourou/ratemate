@@ -9,5 +9,5 @@ create table term_deposit (
     mid_rate text,
     long text,
     long_rate text,
-    date text
+    date real
 )
