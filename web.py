@@ -111,6 +111,14 @@ def term_deposit():
 
     return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest, big_4_td=big_4_td)
 
+@app.route('/online_saver')
+def online_saver():
+    results = WebScrapers()
+    results = results.collate_online_savers()
+
+    return render_template('online_saver.html')
+
+
 
 @app.route('/add', methods=['GET'])
 def add_td():
@@ -128,9 +136,9 @@ def add_td():
     else:
         # if DB has entries then check if has been scraped in the last 24hours
         seconds_10min = 600
-        seconds_day = 86400
+        seconds_day = 86000
         now = time.time()
-        time_past = now - seconds_10min
+        time_past = now - seconds_day
 
         for date in dates:
             if time_past < date[0]:

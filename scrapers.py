@@ -805,3 +805,88 @@ class WebScrapers(object):
         flash('Rates have been successfuly updated!')
 
         return term_deposit
+
+    
+    def get_comm_online(self):
+        url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/netbank-saver/rates-fees.html'
+        soup = self.get_soup(url)
+        content = soup.find('div',{'class': 'productInfoContainer clearfix'})   
+        rates = content.find_all('tr')[1:3]
+    
+        count = 0
+        for rate in rates:
+            if count == 0:
+                total_rate = rate.find_all('td')[1].string.split('%')[0]
+                
+            if count == 1:
+                base_rate = rate.find_all('td')[1].string.split('%')[0]
+         
+            count = count + 1
+
+        comm_online = [{
+            'base': base_rate,
+            'bonus': float(total_rate) - float(base_rate),
+            'total': total_rate
+        }]
+        
+        bank = {
+            'name': 'CBA',
+            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png',
+            'notes': ' '
+        }
+        comm_online.append(bank)
+         
+        return comm_online
+   
+
+    def get_anz_online(self):
+        url = 'https://www.anz.com.au/personal/bank-accounts/savings-accounts/online-saver/'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        rates = soup.find_all('span', {'class': 'productdata'})
+        print 'RATES'
+        for rate in rates:
+            
+            print rate
+
+        return None
+        
+
+    def collate_online_savers(self):
+        
+        comm_online = self.get_comm_online()
+        anz_online = self.get_anz_online()
+
+
+    def get_comm_goal(self):
+        url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/netbank-saver/rates-fees.html'
+        soup = self.get_soup(url)
+        content = soup.find('div',{'class': 'productInfoContainer clearfix'})   
+        rates = content.find_all('tr')[1:3]
+    
+        count = 0
+        for rate in rates:
+            if count == 0:
+                total_rate = rate.find_all('td')[1].string.split('%')[0]
+                
+            if count == 1:
+                base_rate = rate.find_all('td')[1].string.split('%')[0]
+         
+            count = count + 1
+
+        comm_saver = [{
+            'base': base_rate,
+            'bonus': float(total_rate) - float(base_rate),
+            'total': total_rate
+        }]
+        
+        bank = {
+            'name': 'CBA',
+            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png',
+            'notes': ' '
+        }
+        comm_saver.append(bank)
+         
+        return comm_saver
+
