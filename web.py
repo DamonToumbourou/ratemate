@@ -58,10 +58,13 @@ def home():
 @app.route('/term_deposit')
 def term_deposit():
     db = get_db()
-    now = time.time()
-    time_past = now - 4000
+    
+    most_recent_time = db.execute('SELECT MAX(date) from term_deposit')
+    most_recent_time = most_recent_time.fetchall()
+    most_recent_time = most_recent_time[0][0] + 120 
+    time_range = most_recent_time - 300 
 
-    cur = db.execute('select logo, date, name, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit WHERE date BETWEEN ' + str(time_past) + ' AND ' + str(now) )
+    cur = db.execute('select logo, date, name, short, short_rate, mid, mid_rate, long, long_rate, date from term_deposit WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
     term_deposit = cur.fetchall()
      
     wb = Workbook()
@@ -104,9 +107,9 @@ def term_deposit():
     wb.save('static/test.xlsx')
     
     highest =  get_highest_td()
-    top_4_td = get_top_4_td()
+    big_4_td = get_big_4_td()
 
-    return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest, top_4_td=top_4_td)
+    return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest, big_4_td=big_4_td)
 
 
 @app.route('/add', methods=['GET'])
@@ -115,32 +118,33 @@ def add_td():
     db = get_db()
     db = db.execute('select CAST(date AS float) from term_deposit')
     dates = db.fetchall()
-    uptodate = True
+    uptodate = False
     
     # if td db is empty
     if not dates:
-        if get_write_td():
-            print 'DB empty... fetching TDs'
-    
-    # if DB has entries then check if has been scraped in the last 24hours
-    seconds_2min = 120
-    seconds_day = 86400
-    now = time.time()
-    time_past = now - seconds_day
+        print 'DB empty... fetching TDs'
+        get_write_td()
 
-    for date in dates:
-        if time_past < date[0]:
-            uptodate = False
-            date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    else:
+        # if DB has entries then check if has been scraped in the last 24hours
+        seconds_10min = 600
+        seconds_day = 86400
+        now = time.time()
+        time_past = now - seconds_10min
+
+        for date in dates:
+            if time_past < date[0]:
+                uptodate = True
+                date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    
+        if not uptodate:
+            try:
+                get_write_td()
+                flash('Database updated...')
+            except:
+                flash('Database update failed')
     
     if uptodate:
-        try:
-            get_write_td()
-            flash('Database updated...')
-        except:
-            flash('Database update failed')
-    
-    if not uptodate:
         flash('Database is up to date. Last scraped: ')
         flash(date_scraped)
 
@@ -171,13 +175,15 @@ def get_write_td():
 
 def get_highest_td():
     db = get_db()
-    now = time.time()
-    # adjust time depending on scrap distance
-    time_past = now - 6000
+    
+    latest_date = db.execute('SELECT MAX(date) from term_deposit')
+    latest_date = latest_date.fetchall()
+    latest_date = latest_date[0][0] + 60
+    range_date = latest_date - 300
 
-    db = db.execute('SELECT name, logo, short, short_rate, mid, mid_rate, long, long_rate, date FROM term_deposit WHERE date BETWEEN ' + str(time_past) + ' AND ' + str(now) )
+    db = db.execute('SELECT name, logo, short, short_rate, mid, mid_rate, long, long_rate, date FROM term_deposit WHERE date BETWEEN ' + str(range_date) + ' AND ' + str(latest_date) )
     terms = db.fetchall()
-
+    
     short = 0
     mid = 0
     _long = 0 
@@ -217,21 +223,25 @@ def get_highest_td():
     return highest
 
 
-def get_top_4_td():
-    # adjust time depending on scrap distance
-    now = time.time()
-    time_past = now - 4000
-
+def get_big_4_td():
     db = get_db()
-    now = time.time()
-    db = db.execute('''SELECT name, short, short_rate, date FROM term_deposit WHERE( date BETWEEN ''' + str(time_past) + ''' AND ''' + str(now) + ''' ) AND ( name LIKE '%CBA%' OR name LIKE '%westpac%' OR name LIKE '%NAB%' OR name LIKE '%ANZ Advanced%' )''')
+    
+    latest_date = db.execute('SELECT MAX(date) from term_deposit')
+    latest_date = latest_date.fetchall()
+    latest_date = latest_date[0][0] + 60
+    range_date = latest_date - 300
+
+
+    db = db.execute('''SELECT name, logo, short, short_rate, mid, mid_rate, long, long_rate, date FROM term_deposit WHERE( date BETWEEN ''' + str(range_date) + ''' AND ''' + str(latest_date) + ''' ) AND ( name LIKE '%CBA%' OR name LIKE '%westpac%' OR name LIKE '%NAB%' OR name LIKE '%ANZ Advanced%' )''')
     
     terms = db.fetchall()
-    print 'top 4' 
+    
+    big_4 = []
     for term in terms: 
-        print term
-        print '\n'
-
+        big_4.append([term]) 
+   
+    print big_4
+    return big_4
 
 if __name__ == "__main__":
     app.run(debug=True)

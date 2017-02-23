@@ -1,9 +1,13 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-<script> 
+<script>
+    
     function init() {
-        var sorter = tsorter.create('tdRates');
+        var sortesa = tsorter.create('shortRates');
+        var sortesb = tsorter.create('midRates');
+        var sortesc = tsorter.create('longRates');
+        var sortesd = tsorter.create('tdRates');
     }
     window.onload = init;
 
@@ -16,6 +20,7 @@
             <div class="col-lg-12">
             
                 <h2 class="page-header"><i class="fa fa-laptop"></i> Term Deposits</h2>
+                <p> Latest retail term deposit rates</p>
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
                 </a>
@@ -63,9 +68,95 @@
                 
                 </div><!--/.row--> 
            
+                
+                <!-- Big 4 Rates -->
+                <h3 class="page-header"> BIG 4 RATES</h3>
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <section class="panel">
+                            <header class="panel-heading no-border">
+                                Short Term Rates    
+                            </header>
+                            <table id="shortRates" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Institution</th>
+                                        <th>Days</th>
+                                        <th>Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for rate in big_4_td %}
+                                <tr>
+                                    <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
+                                    <td>{{ rate[0].short }}</td>
+                                    <td>{{ rate[0].short_rate }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                    
+                    <div class="col-sm-4">
+                        <section class="panel">
+                            <header class="panel-heading no-border">
+                                Mid Term Rates    
+                            </header>
+                            <table id="midRates"class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Institution</th>
+                                        <th>Days</th>
+                                        <th>Rate</th>
+                                    </tr>
+                              </thead>
+                              <tbody>
+                              {% for rate in big_4_td %}
+                                  <tr>
+                                      <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
+                                      <td>{{ rate[0].mid }}</td>
+                                      <td>{{ rate[0].mid_rate }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                        </section>
+                    </div>
+                    
+                    <div class="col-sm-4">
+                        <section class="panel">
+                            <header class="panel-heading no-border">
+                                Long Term Rates    
+                            </header>
+                            <table id="longRates" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Institution</th>
+                                        <th>Days</th>
+                                        <th>Rate</th>
+                                    </tr>
+                              </thead>
+                              <tbody>
+                              {% for rate in big_4_td %}
+                                  <tr>
+                                      <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
+                                      <td>{{ rate[0].long }}</td>
+                                      <td>{{ rate[0].long_rate }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                        </section>
+                    </div>
 
-                <!-- Best Rate Widgets Top-->   
-                <h3 class="page-header">All retail Rates</h3>
+
+                </div> <!-- end Big 4 Rates section--> 
+
+
+                <!-- All Term Deposit Rates -->   
+                <h3 class="page-header"> All retail Rates</h3>
                 
 
 	        <!-- Table for all Term Deposit Rates-->
@@ -73,15 +164,13 @@
                     <div class="col-lg-12">
                         <section class="panel">
                             <header class="panel-heading">
-                                Latest Retail Rates - Select rate to sort list
+                               All retail term deposit rates
                             </header>
                           <div class="table-responsive">
                             <table id="tdRates" class="table table-bordered">
                               <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>Institution</th>
-                                
+                                  <th>Institution</th>
                                   <th>Short Term</th>
                                   <th>Rate &nbsp<i class="fa fa-sort" aria-hidden="true"></i></th>
                                   <th>Mid Term</th>
@@ -93,14 +182,13 @@
                               <tbody>
                                   {% for term in term_deposit %}
                                     <tr>
-                                        <th><img src="{{ term.logo }}" width="42" height="42"></th>
-                                        <th style="color: black">{{ term.name }}</th>
-                                        <th style="color: #57889c">{{ term.short }}</th>
-                                        <th style="color: #57889c">{{ term.short_rate }}</th>
-                                        <th style="color: #d1b993">{{ term.mid }}</th>
-                                        <th style="color: #d1b993">{{ term.mid_rate }}</th>
-                                        <th style="color: #1a2732">{{ term.long }}</th>
-                                        <th style="color: #1a2732">{{ term.long_rate }}</th>
+                                        <td><img src="{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
+                                        <td>{{ term.short }}</td>
+                                        <td>{{ term.short_rate }}</td>
+                                        <td>{{ term.mid }}</td>
+                                        <td>{{ term.mid_rate }}</td>
+                                        <td>{{ term.long }}</td>
+                                        <td>{{ term.long_rate }}</td>
 
                                   </tr>
                                 {% endfor %}
