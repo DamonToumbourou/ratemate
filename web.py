@@ -135,10 +135,9 @@ def add_td():
 
     else:
         # if DB has entries then check if has been scraped in the last 24hours
-        seconds_10min = 600
-        seconds_day = 86000
+        seconds_week = 604800
         now = time.time()
-        time_past = now - seconds_day
+        time_past = now - seconds_week
 
         for date in dates:
             if time_past < date[0]:
