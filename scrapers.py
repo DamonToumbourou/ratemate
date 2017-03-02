@@ -5,6 +5,8 @@ from flask import flash
 import requests
 import time
 import re
+import smtplib
+import private
 
 PHANTOMJS_PATH = './phantomjs'
 
@@ -64,7 +66,7 @@ class WebScrapers(object):
 
         bank = {
             'name': 'CBA',
-            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png'
+            'logo': 'https://s0.yellowpages.com.au/1032b3ff-284c-4cae-a4a0-7f3678a7b017/commonwealth-bank-home-lending-solutions-highett-3190-logo.jpg'
         }
         term_comm.append(bank)
         
@@ -156,7 +158,6 @@ class WebScrapers(object):
         content = soup.find_all('span', {'data-subsection': 'ANTD'})
         
         count = 0
-        anz_td = []
         for rates in content:
             
             if count is 4:
@@ -232,8 +233,7 @@ class WebScrapers(object):
             'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg'
         }
         west_td.append(bank)
-        print 'westpac'
-        print west_td
+        
         return west_td    
 
     
@@ -361,7 +361,7 @@ class WebScrapers(object):
         
         bank = {
             'name': 'Bankwest',
-            'logo': 'https://pbs.twimg.com/profile_images/795871173183578113/jwHcr2Qk_400x400.jpg'
+            'logo': 'http://is3.mzstatic.com/image/thumb/Purple22/v4/d7/d0/3a/d7d03a65-e915-23e9-287e-9a630767edd9/source/175x175bb.jpg'
         }
         bankwest_td.append(bank)
         
@@ -680,14 +680,25 @@ class WebScrapers(object):
     def collate_td(self):
         
         term_deposit = []
-         
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(private.username_gm, private.password_gm)
+
         print 'fetching rates for ANZ Standard...'
         try:
             anz_standard_td = self.get_anz_standard_td()
             term_deposit.append(anz_standard_td)
             print 'Success :-)'
         except:
+            msg = """\
+            From: Ratemate\
+            Subject: ANZ Standard has failed.
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'Failed :-('
+            
         
         print 'fetching rates for ANZ Advanced Notice...'
         try:
@@ -805,8 +816,12 @@ class WebScrapers(object):
         flash('Rates have been successfuly updated!')
 
         return term_deposit
-
     
+
+    """""""""""""""""""""""""""""
+        Online Saver Scrapers
+    """""""""""""""""""""""""""""
+
     def get_comm_online(self):
         url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/netbank-saver/rates-fees.html'
         soup = self.get_soup(url)
@@ -830,9 +845,10 @@ class WebScrapers(object):
         }]
         
         bank = {
-            'name': 'CBA',
-            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png',
-            'notes': ' '
+            'product': 'Netbank Saver',
+            'bank': 'CBA',
+            'logo': 'https://s0.yellowpages.com.au/1032b3ff-284c-4cae-a4a0-7f3678a7b017/commonwealth-bank-home-lending-solutions-highett-3190-logo.jpg',
+            'notes': ''
         }
         comm_online.append(bank)
          
@@ -844,19 +860,111 @@ class WebScrapers(object):
         browser = webdriver.PhantomJS(PHANTOMJS_PATH)
         browser.get(url)
         soup = bs4(browser.page_source, 'html.parser')
-        rates = soup.find_all('span', {'class': 'productdata'})
-        print 'RATES'
-        for rate in rates:
-            
-            print rate
-
-        return None
         
+        base_rate = soup.find('span', {'class': 'productdata'}).string.split('%')[0]
+        
+        total_rate = soup.find('span', {'class': 'promodata'}).string.split('%')[0]
+        
+        bonus_rate = float(total_rate) - float(base_rate)
+        
+        anz_online = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+        
+        bank = {
+            'product': 'Online Saver',
+            'bank': 'ANZ',
+            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg',
+            'notes': ''
+        }
+        anz_online.append(bank)
 
+        return anz_online
+    
+
+    def get_westpac_online(self):
+        url = 'https://www.westpac.com.au/personal-banking/bank-accounts/savings-accounts/esaver/'
+        soup = self.get_soup(url)
+        content = soup.find('ul',{'class': 'lists lists-tick'})   
+        rates = content.find_all('li')
+        
+        base_rate = rates[1].string.split('%')[0]
+
+        bonus_rate = rates[0].string.split('%')[0]
+
+        total_rate = float(base_rate) + float(bonus_rate)
+        
+        westpac_online = [{
+            'base' : base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'product': 'eSaver',
+            'bank': 'Westpac',
+            'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg',
+            'notes': ''
+        }
+        westpac_online.append(bank)
+        
+        return westpac_online
+
+    
+    def get_nab_online(self):
+        url = 'https://www.nab.com.au/personal/banking/savings-accounts/nab-isaver'
+        soup = self.get_soup(url)
+        content = soup.find('ul', {'class': 'isaver-layout'})
+        rates = content.find_all('li')
+
+        base_rate = rates[0].find('p').string
+
+        bonus_rate = rates[1].find('p').string
+        
+        total_rate = float(base_rate) + float(bonus_rate) 
+        
+        nab_online = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'product': 'iSaver',
+            'bank': 'NAB',
+            'logo': 'https://pbs.twimg.com/profile_images/820753240648130561/tWPXUFde_reasonably_small.jpg',
+            'notes': ''
+        }
+        nab_online.append(bank)
+        
+        return nab_online
+
+
+    def get_stgeorge_online(self):        
+        url = 'https://www.stgeorge.com.au/personal/bank-accounts/bank-account-interest-rates'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        rates = soup.find_all('tr')
+        
     def collate_online_savers(self):
         
-        comm_online = self.get_comm_online()
-        anz_online = self.get_anz_online()
+        #comm_online = self.get_comm_online()
+        #anz_online = self.get_anz_online()
+        #westpac_online = self.get_westpac_online()
+        #nab_online = self.get_nab_online()
+        
+        
+        return None
+
+
+    
+    """""""""""""""""""""""""""
+        Goal Saver Scrapers
+
+    """""""""""""""""""""""""""
 
 
     def get_comm_goal(self):

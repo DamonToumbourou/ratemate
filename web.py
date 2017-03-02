@@ -1,7 +1,6 @@
 from flask import Flask, render_template, url_for, g, redirect, session, request, flash
 from scrapers import WebScrapers
 from openpyxl import Workbook
-from db_handlers import DB_Tools
 import private
 import os
 import sqlite3
@@ -19,7 +18,9 @@ app.config.update(dict(
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
-
+"""
+Database handlers
+"""
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
     rv.row_factory = sqlite3.Row
@@ -36,7 +37,6 @@ def init_db():
         db.cursor().executescript(f.read())
     db.commit()
 
-
 @app.cli.command('initdb')
 def initdb_command():
     init_db()
@@ -48,7 +48,9 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-
+"""
+Routes for pages
+"""
 @app.route('/') 
 def home():
     
@@ -111,16 +113,24 @@ def term_deposit():
 
     return render_template('term_deposit.html', term_deposit=term_deposit, highest=highest, big_4_td=big_4_td)
 
+
 @app.route('/online_saver')
 def online_saver():
-    results = WebScrapers()
-    results = results.collate_online_savers()
 
     return render_template('online_saver.html')
 
+"""
+Routes for scraping data
+"""
+@app.route('/add_online')
+def add_online():
+    results = WebScrapers()
+    results = results.collate_online_savers()
+
+    return redirect(url_for('online_saver'))
 
 
-@app.route('/add', methods=['GET'])
+@app.route('/add_td', methods=['GET'])
 def add_td():
     
     db = get_db()
@@ -157,7 +167,9 @@ def add_td():
 
     return redirect(url_for('term_deposit'))
 
-
+"""
+Functions for handling data
+"""
 def get_write_td():
     results = WebScrapers()
     results = results.collate_td()
