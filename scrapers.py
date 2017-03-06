@@ -11,6 +11,7 @@ import PyPDF2
 import urllib
 from textract import process
 from tika import parser
+import bank_logo
 PHANTOMJS_PATH = './phantomjs'
 
 class WebScrapers(object):
@@ -124,7 +125,7 @@ class WebScrapers(object):
         bank = {
             'name': 'CBA', 
             'product': 'Term Deposit',
-            'logo': 'https://s0.yellowpages.com.au/1032b3ff-284c-4cae-a4a0-7f3678a7b017/commonwealth-bank-home-lending-solutions-highett-3190-logo.jpg',
+            'logo': 'cba.jpg',
             'notes' : 'Interest Paid every 12 months and/or at maturity for terms less than 12 months.'
         }
         comm_td.append(bank)
@@ -161,7 +162,7 @@ class WebScrapers(object):
         bank = {
             'name': 'ANZ Advanced Notice',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg',
+            'logo': 'anz.jpg',
             'notes': ''
         }
         anz_td.append(bank)
@@ -198,7 +199,7 @@ class WebScrapers(object):
         bank = {
             'name': 'ANZ Standard Notice',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg',
+            'logo': 'anz.jpg',
             'notes': ''
         }
         anz_td.append(bank)
@@ -293,9 +294,9 @@ class WebScrapers(object):
         }]
   
         bank = {
-            'name': 'Westpac',
+            'name': 'Westpac',         
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg',
+            'logo': 'westpac.jpg',
             'notes': ''
         }
         west_td.append(bank)
@@ -388,7 +389,7 @@ class WebScrapers(object):
         bank = {
             'name': 'NAB',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/820753240648130561/tWPXUFde_reasonably_small.jpg',
+            'logo': 'nab.jpg',
             'notes': ''
         }
         nab_td.append(bank)
@@ -490,7 +491,7 @@ class WebScrapers(object):
         bank = {
             'name': 'St George',
             'product': 'Term Deposit',
-            'logo': 'https://lh3.googleusercontent.com/-bJWvppmM7qc/AAAAAAAAAAI/AAAAAAAAAIQ/8bilcXY9y5M/s120-c/photo.jpg',
+            'logo': 'george.jpg',
             'notes': ''
         }
         george_td.append(bank)
@@ -582,7 +583,7 @@ class WebScrapers(object):
         bank = {
             'name': 'Bankwest Gold',
             'product': 'Term Deposit',
-            'logo': 'http://is3.mzstatic.com/image/thumb/Purple22/v4/d7/d0/3a/d7d03a65-e915-23e9-287e-9a630767edd9/source/175x175bb.jpg',
+            'logo': 'bankwest.jpg',
             'notes': 'In-store term deposit'
         }
         bankwest_td.append(bank)
@@ -640,7 +641,7 @@ class WebScrapers(object):
         bank = {
             'name': 'UBank Loyalty Bonus',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/816872981175484416/BwQu6mb-.jpg',
+            'logo': 'ubank.jpg',
             'notes': 'Rates only avaliable to existing customers rolling over full deposit'
         }
         ubank_td.append(bank)
@@ -697,7 +698,7 @@ class WebScrapers(object):
         bank = {
             'name': 'UBank Standard',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/816872981175484416/BwQu6mb-.jpg',
+            'logo': 'ubank.jpg',
             'notes': ''
         }
         ubank_td.append(bank)
@@ -793,7 +794,7 @@ class WebScrapers(object):
         bank = {
             'name': 'BOQ',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/458816630949019649/ggOeeSFX_400x400.jpeg',
+            'logo': 'boq.jpg',
             'notes': ''
         }
         boq_td.append(bank)
@@ -859,7 +860,7 @@ class WebScrapers(object):
         bank = {
             'name': 'RaboDirect',
             'product': 'Term Deposit',
-            'logo': 'https://www.rabobank.com/en/images/rabobank-logo68x80.jpg',
+            'logo': 'rabo.jpg',
             'notes': ''
         }
         rabo_td.append(bank)
@@ -948,7 +949,7 @@ class WebScrapers(object):
         bank = {
             'name': 'BOM',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/617918130505908225/NxsY5iOB.jpg',
+            'logo': 'bom.jpg',
             'notes': 'Amounts less than 250k'
         }
         bom_td.append(bank)
@@ -1022,7 +1023,7 @@ class WebScrapers(object):
         bank = {
             'name': 'ING Direct',
             'product': 'Term Deposit',
-            'logo': 'http://investukraine.net/wordpress/wp-content/uploads/2016/08/ing.jpeg',
+            'logo': 'ing.jpg',
             'notes': 'Loyalty bonus of +0.10% for full rollover.'
         }
         ing_td.append(bank)
@@ -1073,7 +1074,7 @@ class WebScrapers(object):
         bank = {
             'name': 'Suncorp',
             'product': 'Term Deposit',
-            'logo': 'http://www.kingsleysoccerclub.com/images/suncorplogo.png',
+            'logo': 'suncorp.jpg',
             'notes': ''
         }
         sun_td.append(bank)
@@ -1122,7 +1123,7 @@ class WebScrapers(object):
         bank = {
             'name': 'Bendigo',
             'product': 'Term Deposit',
-            'logo': 'https://www.communities.bendigobank.com.au/__data/assets/image/0025/19816/BendigoBanklogo.png',
+            'logo': 'bendigo.jpg',
             'notes': ''
         }
         bendigo_td.append(bank)
@@ -1176,7 +1177,7 @@ class WebScrapers(object):
         bank = {
             'name': 'Citibank',
             'product': 'Term Deposit',
-            'logo': 'http://www.ipepalau.com/wp-content/uploads/2011/01/Citibank-Thumbnail.png',
+            'logo': 'citi.jpg',
             'notes': 'Amounts over 75k'
         }
         citi_td.append(bank)
@@ -1372,9 +1373,9 @@ class WebScrapers(object):
         
         bank = {
             'product': 'Netbank Saver',
-            'bank': 'CBA',
-            'logo': 'https://s0.yellowpages.com.au/1032b3ff-284c-4cae-a4a0-7f3678a7b017/commonwealth-bank-home-lending-solutions-highett-3190-logo.jpg',
-            'notes': ''
+            'name': 'CBA',
+            'logo': 'cba.jpg',  
+            'notes': 'Valid for 3 months.'
         }
         comm_online.append(bank)
          
@@ -1401,9 +1402,9 @@ class WebScrapers(object):
         
         bank = {
             'product': 'Online Saver',
-            'bank': 'ANZ',
-            'logo': 'https://pbs.twimg.com/profile_images/706597288299212800/xRvtFYma_400x400.jpg',
-            'notes': ''
+            'name': 'ANZ',
+            'logo': 'anz.jpg',
+            'notes': 'Valid for 3 months.'
         }
         anz_online.append(bank)
 
@@ -1430,9 +1431,9 @@ class WebScrapers(object):
 
         bank = {
             'product': 'eSaver',
-            'bank': 'Westpac',
-            'logo': 'https://pbs.twimg.com/profile_images/695349302118391808/hC-wlVS6_400x400.jpg',
-            'notes': ''
+            'name': 'Westpac',
+            'logo': 'westpac.jpg',
+            'notes': 'Valid for 5 months.'
         }
         westpac_online.append(bank)
         
@@ -1459,9 +1460,9 @@ class WebScrapers(object):
 
         bank = {
             'product': 'iSaver',
-            'bank': 'NAB',
-            'logo': 'https://pbs.twimg.com/profile_images/820753240648130561/tWPXUFde_reasonably_small.jpg',
-            'notes': ''
+            'name': 'NAB',
+            'logo': 'nab.jpg',
+            'notes': 'Valid for 4 months.'
         }
         nab_online.append(bank)
         
@@ -1489,9 +1490,9 @@ class WebScrapers(object):
 
         bank = {
             'product': 'Maxi Saver',
-            'bank': 'St George',
-            'logo': 'https://lh3.googleusercontent.com/-bJWvppmM7qc/AAAAAAAAAAI/AAAAAAAAAIQ/8bilcXY9y5M/s120-c/photo.jpg',
-            'notes': ''
+            'name': 'St George',
+            'logo': 'george.jpg',
+            'notes': 'Valid for 3 months.'
         }
         george_online.append(bank)
 
@@ -1518,9 +1519,9 @@ class WebScrapers(object):
         
         bank = {
             'product': 'TeleNet Saver',
-            'bank': 'Bankwest',
-            'logo': 'http://is3.mzstatic.com/image/thumb/Purple22/v4/d7/d0/3a/d7d03a65-e915-23e9-287e-9a630767edd9/source/175x175bb.jpg',
-            'notes': 'Bonus rate applies for 4 months on new accounts only.'
+            'name': 'Bankwest',
+            'logo': 'bankwest.jpg',
+            'notes': 'Valid for 4 months.'
         }
         bankwest_online.append(bank)
         
@@ -1549,8 +1550,8 @@ class WebScrapers(object):
         bank = {
             'product': 'USaver with Ultra',
             'name': 'UBank',
-            'logo': 'https://pbs.twimg.com/profile_images/816872981175484416/BwQu6mb-.jpg',
-            'notes': 'For balances up to 200k.'
+            'logo': 'ubank.jpg',
+            'notes': 'Valid for balances under 200k.'
         }
         ubank_online.append(bank)
         
@@ -1579,8 +1580,8 @@ class WebScrapers(object):
         bank = {
             'name': 'BOQ',
             'product': 'WebSaving Account',
-            'logo': 'https://pbs.twimg.com/profile_images/458816630949019649/ggOeeSFX_400x400.jpeg',
-            'notes': 'Valid for 4 months on new accounts.'
+            'logo': 'ubank.jpg',
+            'notes': 'Valid for 4 months.'
         }
         boq_online.append(bank)
         
@@ -1609,8 +1610,8 @@ class WebScrapers(object):
         bank = {
             'name': 'Citibank',
             'product': 'Online Saver',
-            'logo': 'http://www.ipepalau.com/wp-content/uploads/2011/01/Citibank-Thumbnail.png',
-            'notes': 'Valid for 4 months on new accounts.'
+            'logo': 'citi.jpg',
+            'notes': 'Valid for 4 months.'
         }
         citi_online.append(bank)
         
@@ -1639,8 +1640,8 @@ class WebScrapers(object):
         bank = {
             'name': 'RaboDirect',
             'product': 'Term Deposit',
-            'logo': 'https://www.rabobank.com/en/images/rabobank-logo68x80.jpg',
-            'notes': 'Valid for 4 months on new accounts.'
+            'logo': 'rabo.jpg',
+            'notes': 'Valid for 4 months.'
         }
         rabo_online.append(bank)
         
@@ -1652,28 +1653,63 @@ class WebScrapers(object):
         browser = webdriver.PhantomJS(PHANTOMJS_PATH)
         browser.get(url)
         soup = bs4(browser.page_source, 'html.parser')
-        
         rates = soup.find_all('span', {'class': 'korolev fontsize120'})
+        
         total_rate = rates[1].find('span').string
         
         base_rate = rates[2].find('span').string
-        print base_rate
+        
+        bonus_rate = float(total_rate) - float(base_rate)
+        
+        bom_online = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
 
         bank = {
             'name': 'BOM',
             'product': 'Term Deposit',
-            'logo': 'https://pbs.twimg.com/profile_images/617918130505908225/NxsY5iOB.jpg',
-            'notes': 'Amounts less than 250k'
+            'logo': 'bom.jpg',
+            'notes': 'Valid for 3 months.'
         }
-        bom_td.append(bank)
+        bom_online.append(bank)
         
-        return bom_td
+        return bom_online
 
     
+    def get_ing_online(self):
+        url = 'https://www.campaigns.ingdirect.com.au/savings-and-everyday-banking?cid=ps:goo:brand|toplevel:sm&pkwd=ing-savings-maximiser'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        
+        rates = soup.find_all('div', {'class': 'rate-value'})
+        total_rate = rates[0].string
+        
+        bonus_rate = soup.find('div', {'class': 'small-description'}).string.split(' ')[1].split('%')[0]
+        
+        base_rate = float(total_rate) - float(bonus_rate)
+        
+        ing_online = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'name': 'ING Direct',
+            'product': 'Savings Maximiser',
+            'logo': 'ing.jpg',
+            'notes': 'Valid for 1 month balance under 100k.'
+        }
+        ing_online.append(bank)
+        
+        return ing_online
+
 
     def collate_online_savers(self):
         
-        self.get_bom_online()
         online_saver = []
         
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -1685,7 +1721,7 @@ class WebScrapers(object):
         print 'fetching rates for ANZ Online Saver...'
         try:
             anz_online = self.get_anz_online()
-            ter.append(anz_standard_td)
+            online_saver.append(anz_online)
             print 'Success :-)'
         except:
             msg = """\
@@ -1721,6 +1757,7 @@ class WebScrapers(object):
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'Failed :-('
             
+
         print 'fetching rates for nab isaver...'
         try:
             nab_online = self.get_nab_online()
@@ -1729,11 +1766,12 @@ class WebScrapers(object):
         except:
             msg = """\
             from: ratemate\
-            NAB isaver has failed..
+            NAB iSaver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
+
         print 'fetching rates for St George Maxi Saver...'
         try:
             george_online = self.get_george_online()
@@ -1747,6 +1785,106 @@ class WebScrapers(object):
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
+        
+        print 'fetching rates for Bankwest TeleNet Saver...'
+        try:
+            bankwest_online = self.get_bankwest_online()
+            online_saver.append(bankwest_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Bankwest Telenet Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for UBank Usaver Ultra...'
+        try:
+            ubank_ultra_online = self.get_ubank_ultra_online()
+            online_saver.append(ubank_ultra_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            UBank Usaver Ultra has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+    
+        print 'fetching rates for BOQ WebSaving...'
+        try:
+            boq_online = self.get_boq_online()
+            online_saver.append(boq_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            BOQ WebSaving has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for Citibank Online Saver...'
+        try:
+            citi_online = self.get_citi_online()
+            online_saver.append(citi_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Citibank Online Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        print 'fetching rates for Rabo Savings Account...'
+        try:
+            rabo_online = self.get_rabo_online()
+            online_saver.append(rabo_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Rabo Savings Account has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        print 'fetching rates for BOM Maxi Saver...'
+        try:
+            bom_online = self.get_bom_online()
+            online_saver.append(bom_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            BOM Maxi Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for ING Savings Maximiser...'
+        try:
+            ing_online = self.get_ing_online()
+            online_saver.append(ing_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            ING Savings Maximiser has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+            
+        flash('Scraping Online Savings Rates Completed.')
+
         return online_saver
 
 
@@ -1787,4 +1925,187 @@ class WebScrapers(object):
         comm_saver.append(bank)
          
         return comm_saver
+
+
+    def collate_progress_savers(self):
+        
+        progress_saver = []
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(private.username_gm, private.password_gm)
+
+        print 'fetching rates for ANZ Progress Saver...'
+        try:
+            anz_online = self.get_anz_online()
+            online_saver.append(anz_online)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            ANZ Online has failed.
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+        
+        print 'fetching rates for CBA Netbank Saver...'
+        try:
+            comm_online = self.get_comm_online()
+            online_saver.append(comm_online)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            CBA Netbak Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+            
+        print 'fetching rates for Westpac eSaver...'
+        try:
+            westpac_online = self.get_westpac_online()
+            online_saver.append(westpac_online)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            Westpac eSaver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+            
+
+        print 'fetching rates for nab isaver...'
+        try:
+            nab_online = self.get_nab_online()
+            online_saver.append(nab_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            NAB iSaver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for St George Maxi Saver...'
+        try:
+            george_online = self.get_george_online()
+            online_saver.append(george_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            St George Maxi Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        print 'fetching rates for Bankwest TeleNet Saver...'
+        try:
+            bankwest_online = self.get_bankwest_online()
+            online_saver.append(bankwest_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Bankwest Telenet Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for UBank Usaver Ultra...'
+        try:
+            ubank_ultra_online = self.get_ubank_ultra_online()
+            online_saver.append(ubank_ultra_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            UBank Usaver Ultra has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+    
+        print 'fetching rates for BOQ WebSaving...'
+        try:
+            boq_online = self.get_boq_online()
+            online_saver.append(boq_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            BOQ WebSaving has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for Citibank Online Saver...'
+        try:
+            citi_online = self.get_citi_online()
+            online_saver.append(citi_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Citibank Online Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        print 'fetching rates for Rabo Savings Account...'
+        try:
+            rabo_online = self.get_rabo_online()
+            online_saver.append(rabo_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            Rabo Savings Account has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        print 'fetching rates for BOM Maxi Saver...'
+        try:
+            bom_online = self.get_bom_online()
+            online_saver.append(bom_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            BOM Maxi Saver has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for ING Savings Maximiser...'
+        try:
+            ing_online = self.get_ing_online()
+            online_saver.append(ing_online)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            ING Savings Maximiser has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+            
+        flash('Scraping Online Savings Rates Completed.')
+
+        return online_saver
+
+
+    
 

@@ -69,7 +69,7 @@
                               <tbody>
                                   {% for term in term_deposit %}
                                     <tr>
-                                        <td><img src="{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
+                                        <td><img src="./static/img/{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
                                         <td align="center"> {{ term.one_month }}{% if term.one_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.two_month }}{% if term.two_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.three_month }}{% if term.three_month == '-' %} {% else %} % {% endif %}</td>

@@ -77,7 +77,7 @@ def term_deposit():
     
     except:
         term_deposit = None
-        print 'no database'
+        print 'no term deposits found'
 
     """ 
     highest =  get_highest_td()
@@ -89,19 +89,64 @@ def term_deposit():
 
 @app.route('/online_saver')
 def online_saver():
+    db = get_db()
+    
+    try:
+        most_recent_time = db.execute('SELECT MAX(date) from online_saver')
+        most_recent_time = most_recent_time.fetchall()
+        most_recent_time = most_recent_time[0][0] + 120 
+        time_range = most_recent_time - 300 
 
-    return render_template('online_saver.html')
+        cur = db.execute('select logo, date, name, notes, product, base, bonus, total, ' \
+                         'date from online_saver WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
+        online_saver = cur.fetchall()
+    
+    except:
+        online_saver = None
+        print 'no online savers found'
+
+
+    return render_template('online_saver.html', online_saver=online_saver)
 
 
 """
 Routes for scraping data
 """
 
-
 @app.route('/add_online')
 def add_online():
-    results = WebScrapers()
-    results = results.collate_online_savers()
+    db = get_db()
+    db = db.execute('select CAST(date AS float) from online_saver')
+    dates = db.fetchall()
+    uptodate = False
+    
+    # if online db is empty
+    if not dates:
+        print 'DB empty... fetching Online Savers'
+        write_online_db()
+
+    else:
+        # if DB has entries then check if has been scraped in the last 24hours
+        seconds_week = 604800
+        now = time.time()
+        time_past = now - seconds_week
+
+        for date in dates:
+            if time_past < date[0]:
+                uptodate = True
+                date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    
+        if not uptodate:
+            try:
+                write_online_db()
+                flash('Database updated...')
+            except:
+                flash('Database update failed')
+    
+    if uptodate:
+        flash('Database is up to date. Last scraped: ')
+        flash(date_scraped)
+
 
     return redirect(url_for('online_saver'))
 
@@ -117,7 +162,7 @@ def add_td():
     # if td db is empty
     if not dates:
         print 'DB empty... fetching TDs'
-        write_td_db()
+        write_online_db()
 
     else:
         # if DB has entries then check if has been scraped in the last 24hours
@@ -132,7 +177,7 @@ def add_td():
     
         if not uptodate:
             try:
-                write_td_db()
+                write_online_db()
                 flash('Database updated...')
             except:
                 flash('Database update failed')
@@ -141,7 +186,7 @@ def add_td():
         flash('Database is up to date. Last scraped: ')
         flash(date_scraped)
 
-    return redirect(url_for('term_deposit'))
+    return redirect(url_for('online_saver'))
 
 
 """
@@ -151,7 +196,6 @@ Functions for handling data
 def write_td_db():
     results = WebScrapers()
     results = results.collate_td()
-    print 'HERE'
     db_write = get_db()
     
     for result in results: 
@@ -181,6 +225,30 @@ def write_td_db():
                          [name, logo, product, one_month, two_month, three_month, four_month, \
                           five_month, six_month, seven_month, eight_month, nine_month, ten_month, \
                           eleven_month, twelve_month, twentyfour_month, thirtysix_month, date])
+        
+        db_write.commit()
+    
+    return True
+
+
+def write_online_db():
+    results = WebScrapers()
+    results = results.collate_online_savers()
+    db_write = get_db()
+    
+    for result in results: 
+        name = result[1].get('name')
+        product = result[1].get('product')
+        logo = result[1].get('logo')
+        date = time.time()
+        base = result[0].get('base')
+        bonus = result[0].get('bonus')
+        total = result[0].get('total')
+        notes = result[1].get('notes')
+
+        db_write.execute('insert into online_saver (name, logo, product, notes, base, bonus, total, ' \
+                         'date) values (?, ?, ?, ?, ?, ?, ?, ?)', \
+                         [name, logo, product, notes, base, bonus, total, date])
         
         db_write.commit()
     
