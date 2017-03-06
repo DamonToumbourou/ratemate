@@ -5,9 +5,7 @@ from flask import flash
 import requests
 import time
 import re
-import smtplib
 import private
-import PyPDF2
 import urllib
 from textract import process
 from tika import parser
@@ -1894,40 +1892,264 @@ class WebScrapers(object):
 
     """""""""""""""""""""""""""
 
-
-    def get_comm_goal(self):
-        url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/netbank-saver/rates-fees.html'
+    def get_comm_progress(self):
+        url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/goalsaver/rates-fees.html'
         soup = self.get_soup(url)
-        content = soup.find('div',{'class': 'productInfoContainer clearfix'})   
-        rates = content.find_all('tr')[1:3]
-    
-        count = 0
-        for rate in rates:
-            if count == 0:
-                total_rate = rate.find_all('td')[1].string.split('%')[0]
-                
-            if count == 1:
-                base_rate = rate.find_all('td')[1].string.split('%')[0]
-         
-            count = count + 1
+        content = soup.find('ul',{'type': 'disc'})   
+        
+        bonus_rate = content.find_all('li')[0].find('b').string.split('%')[0]
+        base_rate = content.find_all('li')[2].string.split(' ')[5].split('%')[0]
 
-        comm_saver = [{
+        comm_progress = [{
             'base': base_rate,
-            'bonus': float(total_rate) - float(base_rate),
+            'bonus': bonus_rate,
+            'total': float(base_rate) + float(bonus_rate)
+        }]
+        
+        bank = {
+            'product': 'GoalSaver',
+            'name': 'CBA',
+            'logo': 'cba.jpg',  
+            'notes': 'Balances up to 100k and deposit at least $200 monthly.'
+        }
+        comm_progress.append(bank)
+        
+        return comm_progress
+   
+
+    def get_anz_progress(self):
+        url = 'https://www.anz.com.au/personal/bank-accounts/savings-accounts/progress-saver/'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        print 'here'
+        base_rate = soup.find_all('span', {'class': 'productdata'})[2].string.split('%')[0]
+
+        bonus_rate = soup.find_all('span', {'class': 'productdata'})[0].string.split('%')[0]
+
+        total_rate = float(base_rate) + float(bonus_rate)
+        
+        anz_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
             'total': total_rate
         }]
         
         bank = {
-            'name': 'CBA',
-            'logo': 'http://i.utdstc.com/icons/120/commbank-android.png',
-            'notes': ' '
+            'product': 'Progress Saver',
+            'name': 'ANZ',
+            'logo': 'anz.jpg',
+            'notes': 'No withdrawals and deposit over $10 monthly.'
         }
-        comm_saver.append(bank)
-         
-        return comm_saver
+        anz_progress.append(bank)
+        
+        return anz_progress
+    
+
+    def get_westpac_progress(self):
+        url = 'https://www.westpac.com.au/personal-banking/bank-accounts/savings-accounts/reward-saver/'
+        soup = self.get_soup(url)
+        content = soup.find('tbody')   
+        content = content.find_all('tr')
+
+        base_rate = content[0].find_all('td')[1]
+        base_rate = str(base_rate).split(' ')[1].split('>')[1].split('%')[0]
+        
+        bonus_rate = content[1].find_all('td')[1].string.split('%')[0]
+
+        total_rate = float(base_rate) + float(bonus_rate)
+        
+        westpac_progress = [{
+            'base' : base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'product': 'Reward Saver',
+            'name': 'Westpac',
+            'logo': 'westpac.jpg',
+            'notes': 'Desposit $50 monthly and no withdrawal.'
+        }
+        westpac_progress.append(bank)
+        
+        return westpac_progress
+
+    
+    def get_nab_progress(self):
+        url = 'https://www.nab.com.au/personal/banking/savings-accounts/nab-reward-saver'
+        soup = self.get_soup(url)
+        content = soup.find_all('p', {'class': 'number'})
+        
+        base_rate = content[0].string
+
+        bonus_rate = content[1].string
+
+        total_rate = float(base_rate) + float(bonus_rate) 
+        
+        nab_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'product': 'Reward Saver',
+            'name': 'NAB',
+            'logo': 'nab.jpg',
+            'notes': 'No withdrawals and at least 1 deposit monthly.'
+        }
+        nab_progress.append(bank)
+        
+        return nab_progress
 
 
-    def collate_progress_savers(self):
+    def get_george_progress(self):        
+        url = 'https://www.stgeorge.com.au/personal/bank-accounts/savings-accounts/incentive-saver'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        rates = soup.find('tbody')
+        rates = rates.find_all('tr')
+
+        base_rate = rates[0].find_all('td')[1].string.split('%')[0]
+        
+        bonus_rate = rates[1].find_all('td')[1].string.split('%')[0]
+        
+        total_rate = float(base_rate) + float(bonus_rate)
+
+        george_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'product': 'Incentive Saver',
+            'name': 'St George',
+            'logo': 'george.jpg',
+            'notes': 'No withdrawals and at least 1 deposit monthly.'
+        }
+        george_progress.append(bank)
+        
+        return george_progress
+    
+    
+    def get_bankwest_smart_progress(self):
+        url = 'http://www.bankwest.com.au/personal/savings-term-deposits/savings-accounts-term-deposits/smart-esaver'
+        soup = self.get_soup(url)
+        
+        total_rate = soup.find_all('span', {'class': 'pbFigures'})[0].string
+
+        base_rate = soup.find('div', {'class': 'pbDetails'})
+        base_rate = base_rate.find_all('li')[1].find('span').string.split('%')[0]
+
+        bonus_rate = float(total_rate) - float(base_rate)
+        
+        bankwest_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+        
+        bank = {
+            'product': 'Smart eSaver',
+            'name': 'Bankwest',
+            'logo': 'bankwest.jpg',
+            'notes': 'No withdrawals / no deposit requirements.'
+        }
+        bankwest_progress.append(bank)
+        
+        return bankwest_progress
+    
+    
+    def get_bankwest_hero_progress(self):
+        url = 'http://www.bankwest.com.au/personal/savings-term-deposits/savings-accounts-term-deposits/hero-saver'
+        soup = self.get_soup(url)
+        
+        total_rate = soup.find_all('span', {'class': 'pbFigures'})[0].string
+        
+        base_rate = soup.find_all('div', {'id': 'contentColumn'})[0].find_all('span')[0].string.split('%')[0]
+
+        bonus_rate = float(total_rate) - float(base_rate)
+        
+        bankwest_hero = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+        
+        bank = {
+            'product': 'Hero Saver',
+            'name': 'Bankwest',
+            'logo': 'bankwest.jpg',
+            'notes': 'No withdrawals and minimum depsoit of $200 monthly.'
+        }
+        bankwest_hero.append(bank)
+        
+        return bankwest_hero
+    
+    
+    def get_rabo_progress(self):
+        url = 'https://www.rabodirect.com.au/rates/personal-rates/'
+        soup = self.get_soup(url)
+        content = soup.find_all('tbody')
+        rates = content[4].find_all('tr')
+
+        total_rate = rates[0].find_all('td')[1].string.strip()
+        
+        base_rate = rates[0].find_all('td')[2].string.strip()
+        
+        bonus_rate = float(total_rate) - float(base_rate)
+
+        rabo_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'name': 'RaboDirect',
+            'product': 'Premium Saver',
+            'logo': 'rabo.jpg',
+            'notes': 'Balance must increase by $200 monthly.'
+        }
+        rabo_progress.append(bank)
+        
+        return rabo_progress
+   
+
+    def get_bom_progress(self):
+        url = 'https://www.bankofmelbourne.com.au/personal/bank-and-save/savings-account/incentive-saver'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        rates = soup.find_all('span', {'class': 'js-rates'})
+        
+        total_rate = rates[0].string
+
+        base_rate = rates[1].string
+
+        bonus_rate = float(total_rate) + float(base_rate)
+        
+        bom_progress = [{
+            'base': base_rate,
+            'bonus': bonus_rate,
+            'total': total_rate
+        }]
+
+        bank = {
+            'name': 'BOM',
+            'product': 'Incentive Saver',
+            'logo': 'bom.jpg',
+            'notes': 'No mimimum monthly deposit.'
+        }
+        bom_progress.append(bank)
+        return bom_progress
+
+
+        
+    def collate_progress_saver(self):
         
         progress_saver = []
         
@@ -1939,173 +2161,444 @@ class WebScrapers(object):
 
         print 'fetching rates for ANZ Progress Saver...'
         try:
-            anz_online = self.get_anz_online()
-            online_saver.append(anz_online)
+            anz_progress = self.get_anz_progress()
+            progress_saver.append(anz_progress)
             print 'Success :-)'
         except:
             msg = """\
             From: Ratemate\
-            ANZ Online has failed.
+            ANZ Progress has failed.
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'Failed :-('
         
-        print 'fetching rates for CBA Netbank Saver...'
+        print 'fetching rates for CBA Goal Saver...'
         try:
-            comm_online = self.get_comm_online()
-            online_saver.append(comm_online)
+            comm_progress = self.get_comm_progress()
+            progress_saver.append(comm_progress)
             print 'Success :-)'
         except:
             msg = """\
             From: Ratemate\
-            CBA Netbak Saver has failed..
+            CBA Goal Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'Failed :-('
             
-        print 'fetching rates for Westpac eSaver...'
+        print 'fetching rates for Westpac Reward Saver...'
         try:
-            westpac_online = self.get_westpac_online()
-            online_saver.append(westpac_online)
+            westpac_progress = self.get_westpac_progress()
+            progress_saver.append(westpac_progress)
             print 'Success :-)'
         except:
             msg = """\
             From: Ratemate\
-            Westpac eSaver has failed..
+            Westpac Reward Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'Failed :-('
             
 
-        print 'fetching rates for nab isaver...'
+        print 'fetching rates for NAB Reward Saver...'
         try:
-            nab_online = self.get_nab_online()
-            online_saver.append(nab_online)
+            nab_progress = self.get_nab_progress()
+            progress_saver.append(nab_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            NAB iSaver has failed..
+            NAB Reward Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
 
-        print 'fetching rates for St George Maxi Saver...'
+        print 'fetching rates for St George Incentive Saver...'
         try:
-            george_online = self.get_george_online()
-            online_saver.append(george_online)
+            george_progress = self.get_george_progress()
+            progress_saver.append(george_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            St George Maxi Saver has failed..
+            St George Incentive Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
         
-        print 'fetching rates for Bankwest TeleNet Saver...'
+        print 'fetching rates for Bankwest Smart eSaver...'
         try:
-            bankwest_online = self.get_bankwest_online()
-            online_saver.append(bankwest_online)
+            bankwest_smart_progress = self.get_bankwest_smart_progress()
+            progress_saver.append(bankwest_smart_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            Bankwest Telenet Saver has failed..
+            Bankwest Smart eSaver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
 
-        print 'fetching rates for UBank Usaver Ultra...'
+        print 'fetching rates for Bankwest Hero Saver...'
         try:
-            ubank_ultra_online = self.get_ubank_ultra_online()
-            online_saver.append(ubank_ultra_online)
+            bankwest_hero_progress = self.get_bankwest_hero_progress()
+            progress_saver.append(bankwest_hero_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            UBank Usaver Ultra has failed..
+            Bankwest Hero Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
     
-        print 'fetching rates for BOQ WebSaving...'
+        print 'fetching rates for Rabo Premium Saver...'
         try:
-            boq_online = self.get_boq_online()
-            online_saver.append(boq_online)
+            rabo_progress = self.get_rabo_progress()
+            progress_saver.append(rabo_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            BOQ WebSaving has failed..
+            Rabo Premium Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
 
-        print 'fetching rates for Citibank Online Saver...'
+        print 'fetching rates for BOM Incentive Saver...'
         try:
-            citi_online = self.get_citi_online()
-            online_saver.append(citi_online)
+            bom_progress = self.get_bom_progress()
+            progress_saver.append(bom_progress)
             print 'success :-)'
         except:
             msg = """\
             from: ratemate\
-            Citibank Online Saver has failed..
+            BOM Incentive Saver has failed..
             """
             server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
             print 'failed :-('
          
-        
-        print 'fetching rates for Rabo Savings Account...'
-        try:
-            rabo_online = self.get_rabo_online()
-            online_saver.append(rabo_online)
-            print 'success :-)'
-        except:
-            msg = """\
-            from: ratemate\
-            Rabo Savings Account has failed..
-            """
-            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
-            print 'failed :-('
-         
-        
-        print 'fetching rates for BOM Maxi Saver...'
-        try:
-            bom_online = self.get_bom_online()
-            online_saver.append(bom_online)
-            print 'success :-)'
-        except:
-            msg = """\
-            from: ratemate\
-            BOM Maxi Saver has failed..
-            """
-            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
-            print 'failed :-('
-         
-
-        print 'fetching rates for ING Savings Maximiser...'
-        try:
-            ing_online = self.get_ing_online()
-            online_saver.append(ing_online)
-            print 'success :-)'
-        except:
-            msg = """\
-            from: ratemate\
-            ING Savings Maximiser has failed..
-            """
-            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
-            print 'failed :-('
-            
         flash('Scraping Online Savings Rates Completed.')
 
-        return online_saver
+        return progress_saver
 
+        
 
+    """""""""""""""""""""""""""
+    CASH MANAGER SCRAPERS
+
+    """""""""""""""""""""""""""
+
+    def get_comm_cash(self):
+        url = 'https://www.commbank.com.au/personal/accounts/savings-accounts/commonwealth-direct-investment/rates-fees.html'
+        soup = self.get_soup(url)
+        content = soup.find('tbody')   
+        content = content.find_all('tr')
+        
+        _500k = content[3].find_all('td')[1].find('p').string.split('%')[0]
+        
+        _250k = content[4].find_all('td')[1].find('p').string.split('%')[0]
+        
+        _100k = content[5].find_all('td')[1].find('p').string.split('%')[0]
+
+        _50k = content[6].find_all('td')[1].find('p').string.split('%')[0]
+
+        comm_cash = [{
+            '500k and over': _500k,
+            '250k - 500k': _250k,
+            '100k - 250k': _100k,
+            '50k - 100k': _50k
+        }]
+        
+        bank = {
+            'product': 'Direct Investment Account',
+            'name': 'CBA',
+            'logo': 'cba.jpg',  
+            'notes': 'Standard Access.'
+        }
+        comm_cash.append(bank)
+        
+        return comm_cash
+   
+
+    def get_anz_cash(self):
+        url = 'https://www.anz.com.au/personal/bank-accounts/savings-accounts/premium-cash-management/'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        
+        rate = soup.find_all('tbody')
+        rate = rate[1].find_all('tr')
+
+        _500k = rate[6].find_all('td')[0].find('p').string.split('%')[0]
+
+        _250k = rate[5].find_all('td')[0].find('p').string.split('%')[0]
+        
+        _100k = rate[4].find_all('td')[0].find('p').string.split('%')[0]
+        
+        _50k = rate[3].find_all('td')[0].find('p').string.split('%')[0]
+
+        anz_cash = [{
+            '500k and over': _500k,
+            '250k - 500k': _250k,
+            '100k - 250k': _100k,
+            '50k - 100k': _50k
+        }]
+        
+        bank = {
+            'product': 'Premium Cash Management Account',
+            'name': 'ANZ',
+            'logo': 'anz.jpg',
+            'notes': ''
+        }
+        anz_cash.append(bank)
+        
+        return anz_cash
+   
     
+    def get_nab_cash(self):
+        url = 'https://www.nab.com.au/personal/banking/savings-accounts/nab-cash-manager'
+        soup = self.get_soup(url)
+        content = soup.find_all('p', {'class': 'number'})[0].string
+    
+        rate = content
+        
+        nab_cash = [{
+            '500k and over': rate,
+            '250k - 500k': rate,
+            '100k - 250k': rate,
+            '50k - 100k': rate 
+        }]
 
+        bank = {
+            'product': 'Cash Manager',
+            'name': 'NAB',
+            'logo': 'nab.jpg',
+            'notes': 'Minimium depsoit $5k then no minimum account balance.'
+        }
+        nab_cash.append(bank)
+        
+        return nab_cash
+
+
+    def get_george_cash(self):        
+        url = 'https://www.stgeorge.com.au/personal/bank-accounts/savings-accounts/investment-cash-account'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        rates = soup.find_all('tbody')
+        rates = rates[1].find_all('tr') 
+        
+        _50k = rates[4].find_all('td')[1].find('span').string
+        
+        _100k = rates[5].find_all('td')[1].find('span').string
+
+        _250k = rates[6].find_all('td')[1].find('span').string
+        
+        _500k = rates[7].find_all('td')[1].find('span').string
+
+        george_cash = [{
+            '500k and over': _500k,
+            '250k - 500k': _250k,
+            '100k - 250k': _100k,
+            '50k - 100k': _50k
+        }]
+
+        bank = {
+            'product': 'Cash Investment Account',
+            'name': 'St George',
+            'logo': 'george.jpg',
+            'notes': ''
+        }
+        george_cash.append(bank)
+         
+        return george_cash
+    
+    
+    def collate_cash(self):
+        
+        cash_manager = []
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(private.username_gm, private.password_gm)
+
+        print 'fetching rates for ANZ Premium Cash Manager...'
+        try:
+            anz_cash = self.get_anz_cash()
+            cash_manager.append(anz_cash)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            ANZ Cash Manager has failed.
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+        
+        print 'fetching rates for CBA Direct Investment...'
+        try:
+            comm_cash = self.get_comm_cash()
+            cash_manager.append(comm_cash)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            CBA Direct Investement has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+            
+
+        print 'fetching rates for NAB Cash Manager...'
+        try:
+            nab_cash = self.get_nab_cash()
+            cash_manager.append(nab_cash)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            NAB Cash Manager has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+
+        print 'fetching rates for St George Investment Cash...'
+        try:
+            george_cash = self.get_george_cash()
+            cash_manager.append(george_cash)
+            print 'success :-)'
+        except:
+            msg = """\
+            from: ratemate\
+            St George Investment Cash has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'failed :-('
+         
+        
+        flash('Scraping Cash Managment Accounts Completed.')
+
+        return cash_manager
+
+        
+
+
+    """""""""""""""""""""""""""
+    PENSIONER SCRAPERS
+
+    """""""""""""""""""""""""""
+
+    def get_comm_pensioner(self):
+        url = 'https://www.commbank.com.au/personal/accounts/transaction-accounts/pensioner-security.html'
+        soup = self.get_soup(url)
+        content = soup.find('tbody').find_all('tr')   
+
+        _0k = content[0].find_all('p')[1]
+        _0k = str(_0k).split(' ')[0].split('%')[0].split('>')[1]
+        
+        _2k = content[1].find_all('p')[1]
+        _2k = str(_2k).split('%')[0].split('>')[1]
+        
+        _5k = content[2].find_all('p')[1]
+        _5k = str(_5k).split('%')[0].split('%')[0].split('>')[1]
+        
+        comm_pensioner = [{
+            '0k': _0k,
+            '2k': _2k,
+            '5k': _5k
+        }]
+        
+        bank = {
+            'product': 'Pensioner Security Account',
+            'name': 'CBA',
+            'logo': 'cba.jpg',  
+            'notes': ''
+        }
+        comm_pensioner.append(bank)
+        
+        return comm_pensioner
+   
+
+    def get_anz_pensioner(self):
+        url = 'https://www.anz.com.au/personal/bank-accounts/everyday-accounts/pensioner-advantage/'
+        browser = webdriver.PhantomJS(PHANTOMJS_PATH)
+        browser.get(url)
+        soup = bs4(browser.page_source, 'html.parser')
+        
+        rate = soup.find_all('tbody')
+        _0k = rate[0].find_all('tr')[2].find('span').string.split('%')[0]
+        
+        _2k = rate[0].find_all('tr')[3].find('span').string.split('%')[0]
+        
+        _5k = rate[0].find_all('tr')[4].find('span').string.split('%')[0]
+        
+        anz_pensioner = [{
+            '0k': _0k,
+            '2k': _2k,
+            '5k': _5k
+        }]
+        
+        bank = {
+            'product': 'Pensioner Advantage',
+            'name': 'ANZ',
+            'logo': 'anz.jpg',
+            'notes': ''
+        }
+        anz_pensioner.append(bank)
+        
+        return anz_pensioner
+   
+ 
+    def collate_pensioner(self):
+        
+        pensioner = []
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(private.username_gm, private.password_gm)
+
+
+        print 'fetching rates for ANZ Pensioner Advantage...'
+        try:
+            anz_pensioner = self.get_anz_pensioner()
+            pensioner.append(anz_pensioner)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            ANZ Pensioner has failed.
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+       
+
+        print 'fetching rates for CBA Pensioner Security...'
+        try:
+            comm_pensioner = self.get_comm_pensioner()
+            pensioner.append(comm_pensioner)
+            print 'Success :-)'
+        except:
+            msg = """\
+            From: Ratemate\
+            CBA Pensioner has failed..
+            """
+            server.sendmail('dtoumbourou@gmail.com', 'dtoumbourou@gmail.com', msg,)
+            print 'Failed :-('
+                
+        
+        flash('Scraping Pensioner Accounts Completed.')
+
+        return pensioner
+
+        
+    

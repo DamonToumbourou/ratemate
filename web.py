@@ -109,6 +109,69 @@ def online_saver():
     return render_template('online_saver.html', online_saver=online_saver)
 
 
+@app.route('/progress_saver')
+def progress_saver():
+    db = get_db()
+    
+    try:
+        most_recent_time = db.execute('SELECT MAX(date) from progress_saver')
+        most_recent_time = most_recent_time.fetchall()
+        most_recent_time = most_recent_time[0][0] + 120 
+        time_range = most_recent_time - 300 
+
+        cur = db.execute('select logo, date, name, notes, product, base, bonus, total, ' \
+                         'date from progress_saver WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
+        progress_saver = cur.fetchall()
+    
+    except:
+        progress_saver = None
+        print 'no progress savers found'
+
+    return render_template('progress_saver.html', progress_saver=progress_saver)
+
+
+@app.route('/cash_manager')
+def cash_manager():
+    db = get_db()
+    
+    try:
+        most_recent_time = db.execute('SELECT MAX(date) from cash_manager')
+        most_recent_time = most_recent_time.fetchall()
+        most_recent_time = most_recent_time[0][0] + 120 
+        time_range = most_recent_time - 300 
+
+        cur = db.execute('select logo, date, name, notes, product, _500k, _250k, _100k, _50k, ' \
+                         'date from cash_manager WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
+        cash_manager = cur.fetchall()
+    
+    except:
+        cash_manager = None
+        print 'no cash manager found'
+    print cash_manager
+    return render_template('cash_manager.html', cash_manager=cash_manager)
+
+
+@app.route('/pensioner')
+def pensioner():
+    db = get_db()
+    
+    try:
+        most_recent_time = db.execute('SELECT MAX(date) from pensioner')
+        most_recent_time = most_recent_time.fetchall()
+        most_recent_time = most_recent_time[0][0] + 120 
+        time_range = most_recent_time - 300 
+
+        cur = db.execute('select logo, date, name, notes, product, _0k, _2k, _5K, ' \
+                         'date from pensioner WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
+        pensioner = cur.fetchall()
+    
+    except:
+        pensioner = None
+        print 'no online pensioners found'
+
+    return render_template('pensioner.html', pensioner=pensioner)
+
+
 """
 Routes for scraping data
 """
@@ -151,18 +214,17 @@ def add_online():
     return redirect(url_for('online_saver'))
 
 
-@app.route('/add_td', methods=['GET'])
-def add_td():
-    
+@app.route('/add_progress')
+def add_progress():
     db = get_db()
-    db = db.execute('select CAST(date AS float) from term_deposit')
+    db = db.execute('select CAST(date AS float) from progress_saver')
     dates = db.fetchall()
     uptodate = False
     
-    # if td db is empty
+    # if online db is empty
     if not dates:
-        print 'DB empty... fetching TDs'
-        write_online_db()
+        print 'DB empty... fetching Progress Savers'
+        write_progress_db()
 
     else:
         # if DB has entries then check if has been scraped in the last 24hours
@@ -177,7 +239,7 @@ def add_td():
     
         if not uptodate:
             try:
-                write_online_db()
+                write_progress_db()
                 flash('Database updated...')
             except:
                 flash('Database update failed')
@@ -186,7 +248,121 @@ def add_td():
         flash('Database is up to date. Last scraped: ')
         flash(date_scraped)
 
-    return redirect(url_for('online_saver'))
+
+    return redirect(url_for('progress_saver'))
+
+
+@app.route('/add_cash')
+def add_cash():
+    db = get_db()
+    db = db.execute('select CAST(date AS float) from cash_manager')
+    dates = db.fetchall()
+    uptodate = False
+    
+    # if online db is empty
+    if not dates:
+        print 'DB empty... fetching cash managers'
+        write_cash_db()
+
+    else:
+        # if DB has entries then check if has been scraped in the last 24hours
+        seconds_week = 604800
+        now = time.time()
+        time_past = now - seconds_week
+
+        for date in dates:
+            if time_past < date[0]:
+                uptodate = True
+                date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    
+        if not uptodate:
+            try:
+                write_cash_db()
+                flash('Database updated...')
+            except:
+                flash('Database update failed')
+    
+    if uptodate:
+        flash('Database is up to date. Last scraped: ')
+        flash(date_scraped)
+
+
+    return redirect(url_for('cash_manager'))
+
+
+@app.route('/add_pensioner')
+def add_pensioner():
+    db = get_db()
+    db = db.execute('select CAST(date AS float) from pensioner')
+    dates = db.fetchall()
+    uptodate = False
+    
+    # if online db is empty
+    if not dates:
+        print 'DB empty... fetching pensioner'
+        write_pensioner_db()
+
+    else:
+        # if DB has entries then check if has been scraped in the last 24hours
+        seconds_week = 604800
+        now = time.time()
+        time_past = now - seconds_week
+
+        for date in dates:
+            if time_past < date[0]:
+                uptodate = True
+                date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    
+        if not uptodate:
+            try:
+                write_pensioner_db()
+                flash('Database updated...')
+            except:
+                flash('Database update failed')
+    
+    if uptodate:
+        flash('Database is up to date. Last scraped: ')
+        flash(date_scraped)
+
+    return redirect(url_for('pensioner'))
+
+
+@app.route('/add_td', methods=['GET'])
+def add_td():
+    
+    db = get_db()
+    db = db.execute('select CAST(date AS float) from term_deposit')
+    dates = db.fetchall()
+    uptodate = False
+    
+    # if td db is empty
+    if not dates:
+        print 'DB empty... fetching TDs'
+        write_td_db()
+
+    else:
+        # if DB has entries then check if has been scraped in the last 24hours
+        seconds_week = 604800
+        now = time.time()
+        time_past = now - seconds_week
+
+        for date in dates:
+            if time_past < date[0]:
+                uptodate = True
+                date_scraped = time.strftime('%d-%m-%Y %H:%M', time.localtime(date[0]))
+    
+        if not uptodate:
+            try:
+                write_td_db()
+                flash('Database updated...')
+            except:
+                flash('Database update failed')
+    
+    if uptodate:
+        flash('Database is up to date. Last scraped: ')
+        flash(date_scraped)
+
+    return redirect(url_for('term_deposit'))
 
 
 """
@@ -249,6 +425,78 @@ def write_online_db():
         db_write.execute('insert into online_saver (name, logo, product, notes, base, bonus, total, ' \
                          'date) values (?, ?, ?, ?, ?, ?, ?, ?)', \
                          [name, logo, product, notes, base, bonus, total, date])
+        
+        db_write.commit()
+    
+    return True
+
+
+def write_progress_db():
+    results = WebScrapers()
+    results = results.collate_progress_saver()
+    db_write = get_db()
+    
+    for result in results: 
+        name = result[1].get('name')
+        product = result[1].get('product')
+        logo = result[1].get('logo')
+        date = time.time()
+        base = result[0].get('base')
+        bonus = result[0].get('bonus')
+        total = result[0].get('total')
+        notes = result[1].get('notes')
+
+        db_write.execute('insert into progress_saver (name, logo, product, notes, base, bonus, total, ' \
+                         'date) values (?, ?, ?, ?, ?, ?, ?, ?)', \
+                         [name, logo, product, notes, base, bonus, total, date])
+        
+        db_write.commit()
+    
+    return True
+
+
+def write_pensioner_db():
+    results = WebScrapers()
+    results = results.collate_pensioner()
+    db_write = get_db()
+    
+    for result in results: 
+        name = result[1].get('name')
+        product = result[1].get('product')
+        logo = result[1].get('logo')
+        date = time.time()
+        _0k = result[0].get('0k')
+        _2k = result[0].get('2k')
+        _5k = result[0].get('5k')
+        notes = result[1].get('notes')
+        print '_0k'
+        print _0k
+        db_write.execute('insert into pensioner (name, logo, product, notes, _0k, _2k, _5k, date) values (?, ?, ?, ?, ?, ?, ?, ?)', [name, logo, product, notes, _0k, _2k, _5k, date])
+        
+        db_write.commit()
+    
+    return True
+
+
+def write_cash_db():
+    results = WebScrapers()
+    results = results.collate_cash()
+    db_write = get_db()
+    
+    for result in results: 
+        name = result[1].get('name')
+        product = result[1].get('product')
+        logo = result[1].get('logo')
+        date = time.time()
+        _500k = result[0].get('500k and over')
+        _250k = result[0].get('250k - 500k')
+        _100k = result[0].get('100k - 250k')
+        _50k = result[0].get('50k - 100k')
+        notes = result[1].get('notes')
+
+        db_write.execute('insert into cash_manager (name, logo, product, notes, _500k, _250k, _100k, _50k, ' \
+                         'date) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', \
+                         [name, logo, product, notes, _500k, _250k, _100k, _50k, date])
         
         db_write.commit()
     
