@@ -14,3 +14,4 @@ private.py
 geckodriver.log
 ghostdriver.log
 ratemate.db
+*.pdf

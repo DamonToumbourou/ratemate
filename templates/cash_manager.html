@@ -3,7 +3,7 @@
 
 <script>
     function init() {
-        var sortesa = tsorter.create('onlineRates');
+        var sortesa = tsorter.create('cashRates');
     }
     window.onload = init;
 </script>
@@ -14,12 +14,12 @@
             
             <div class="col-lg-12">
             
-                <h2 class="page-header"><i class="fa fa-laptop"></i> Online Savers</h2>
-                <p> Latest retail online saver rates</p>
+                <h2 class="page-header"><i class="fa fa-laptop"></i> Cash Manager</h2>
+                <p> Latest retail cash manager account rates</p>
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
                 </a>
-                <a href="{{ '/add_online' }}">    
+                <a href="{{ '/add_cash' }}">    
                     <span class="badge bg-success">Refresh Rates</span>
                 </a>
                 
@@ -32,10 +32,12 @@
                 {% endwith %}
                 <hr>
 
-            <h3 class="page-header"> All retail online saver rates</h3>
+
+            {% if cash_manager %}
+            
+            <h3 class="page-header"> All retail cash management account rates</h3>
  
-            {% if online_saver %}
-            <!-- Table for all Online Saver Rates-->
+            <!-- Table for all cash manager Rates-->
             <div class="row">
                 <div class="col-lg-12">
                     <section class="panel">
@@ -43,23 +45,25 @@
                             *Select rate to sort
                         </header>
                         <div class="table-responsive">
-                            <table id="onlineRates" class="table table-hover">
+                            <table id="cashRates" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Institution</th>
-                                        <th>Base rate</th>
-                                        <th>Bonus rate</th>
-                                        <th>Total Rate</th>
+                                        <th>50k - 100k</th>
+                                        <th>100k - 250k</th>
+                                        <th>250k - 500k</th>
+                                        <th>500k and over</th>
                                         <th>Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for rate in online_saver %}
+                                {% for rate in cash_manager %}
                                     <tr>
                                         <td><img src="./static/img/{{ rate.logo }}" width="42" height="42"> &nbsp{{ rate.product }}</td>
-                                        <td> {{ rate.base }}%</td>
-                                        <td> {{ rate.bonus }}%</td>
-                                        <td> {{ rate.total }}%</td>
+                                        <td> {{ rate._50k }}%</td>
+                                        <td> {{ rate._100k }}%</td>
+                                        <td> {{ rate._250k }}%</td>
+                                        <td> {{ rate._500k }}%</td>
                                         <td> {{ rate.notes }}</td>
                                     </tr>
                                 {% endfor %}

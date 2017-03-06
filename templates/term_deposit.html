@@ -4,10 +4,7 @@
 <script>
     
     function init() {
-        var sortesa = tsorter.create('shortRates');
-        var sortesb = tsorter.create('midRates');
-        var sortesc = tsorter.create('longRates');
-        var sortesd = tsorter.create('tdRates');
+        var sortesa = tsorter.create('tdRates');
     }
     window.onload = init;
 
@@ -24,7 +21,7 @@
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
                 </a>
-                <a href="{{ '/add' }}">    
+                <a href="{{ '/add_td' }}">    
                     <span class="badge bg-success">Refresh Rates</span>
                 </a>
                 
@@ -37,168 +34,65 @@
                 {% endwith %}
                 <hr>
                 
-
-                <!-- Best Rate Widgets Top-->   
-                <h3 class="page-header"> Highest Retail Rates</h3>
-                
-                <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div class="info-box blue-bg">
-                            <i><img src="{{ highest[0][0].short_logo }}" style="width:82px; height:82px"></i>
-                            <div class="count">{{ highest[0][0].short_rate }}%</div>
-                            <div class="title">Short Term</div>                        
-                        </div><!--/.info-box-->            
-                    </div><!--/.col-->
-            
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div class="info-box brown-bg">
-                            <i><img src="{{ highest[0][0].mid_logo }}" style="width:82px; height:82px"></i>
-                            <div class="count">{{ highest[0][0].mid_rate }}%</div>
-                            <div class="title">Mid Term</div>                        
-                        </div><!--/.info-box-->            
-                    </div><!--/.col-->    
-            
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <div class="info-box dark-bg">
-                            <i><img src="{{ highest[0][0].long_logo }}" style="width:82px; height: 82px"></i>
-                            <div class="count">{{ highest[0][0].long_rate }}%</div>
-                            <div class="title">Long Term</div>                        
-                        </div><!--/.info-box-->            
-                    </div><!--/.col-->
-                
-                </div><!--/.row--> 
-           
-                
-                <!-- Big 4 Rates -->
-                <h3 class="page-header"> BIG 4 RATES</h3>
-                
-                <div class="row">
-                    <div class="col-sm-4">
-                        <section class="panel">
-                            <header class="panel-heading no-border">
-                                Short Term Rates    
-                            </header>
-                            <table id="shortRates" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Days</th>
-                                        <th>Rate</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for rate in big_4_td %}
-                                <tr>
-                                    <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
-                                    <td>{{ rate[0].short }}</td>
-                                    <td>{{ rate[0].short_rate }}</td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </section>
-                    </div>
-                    
-                    <div class="col-sm-4">
-                        <section class="panel">
-                            <header class="panel-heading no-border">
-                                Mid Term Rates    
-                            </header>
-                            <table id="midRates"class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Days</th>
-                                        <th>Rate</th>
-                                    </tr>
-                              </thead>
-                              <tbody>
-                              {% for rate in big_4_td %}
-                                  <tr>
-                                      <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
-                                      <td>{{ rate[0].mid }}</td>
-                                      <td>{{ rate[0].mid_rate }}</td>
-                                  </tr>
-                                  {% endfor %}
-                              </tbody>
-                            </table>
-                        </section>
-                    </div>
-                    
-                    <div class="col-sm-4">
-                        <section class="panel">
-                            <header class="panel-heading no-border">
-                                Long Term Rates    
-                            </header>
-                            <table id="longRates" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Days</th>
-                                        <th>Rate</th>
-                                    </tr>
-                              </thead>
-                              <tbody>
-                              {% for rate in big_4_td %}
-                                  <tr>
-                                      <td><img src="{{ rate[0].logo }}" width="52" height="52"></td>
-                                      <td>{{ rate[0].long }}</td>
-                                      <td>{{ rate[0].long_rate }}</td>
-                                  </tr>
-                                  {% endfor %}
-                              </tbody>
-                            </table>
-                        </section>
-                    </div>
-
-
-                </div> <!-- end Big 4 Rates section--> 
-
-
                 <!-- All Term Deposit Rates -->   
                 <h3 class="page-header"> All retail Rates</h3>
                 
-
+                {% if term_deposit %}
 	        <!-- Table for all Term Deposit Rates-->
                 <div class="row">
                     <div class="col-lg-12">
                         <section class="panel">
                             <header class="panel-heading">
-                               All retail term deposit rates
+                               *Select month to sort
                             </header>
                           <div class="table-responsive">
                             <table id="tdRates" class="table table-bordered">
                               <thead>
                                 <tr>
-                                  <th>Institution</th>
-                                  <th>Short Term</th>
-                                  <th>Rate &nbsp<i class="fa fa-sort" aria-hidden="true"></i></th>
-                                  <th>Mid Term</th>
-                                  <th>Rate &nbsp<i class="fa fa-sort" aria-hidden="true"></i></th>
-                                  <th>Long Term</th> 
-                                  <th>Rate &nbsp<i class="fa fa-sort" aria-hidden="true"></i></th>
+                                  <th>Terms in months</th>
+                                  <th>&nbsp 1</th>
+                                  <th>&nbsp 2</th>
+                                  <th>&nbsp 3</th>
+                                  <th>&nbsp 4</th>
+                                  <th>&nbsp 5</th>
+                                  <th>&nbsp 6</th>
+                                  <th>&nbsp 7</th>
+                                  <th>&nbsp 8</th>
+                                  <th>&nbsp 9</th>
+                                  <th>&nbsp 10</th>
+                                  <th>&nbsp 11</th>
+                                  <th>&nbsp 12</th>
+                                  <th>&nbsp 24</th>
+                                  <th>&nbsp 36</th>
                                 </tr>
                               </thead>
                               <tbody>
                                   {% for term in term_deposit %}
                                     <tr>
-                                        <td><img src="{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
-                                        <td>{{ term.short }}</td>
-                                        <td>{{ term.short_rate }}</td>
-                                        <td>{{ term.mid }}</td>
-                                        <td>{{ term.mid_rate }}</td>
-                                        <td>{{ term.long }}</td>
-                                        <td>{{ term.long_rate }}</td>
-
-                                  </tr>
+                                        <td><img src="./static/img/{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
+                                        <td align="center"> {{ term.one_month }}{% if term.one_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.two_month }}{% if term.two_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.three_month }}{% if term.three_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.four_month }}{% if term.four_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.five_month }}{% if term.five_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.six_month }}{% if term.six_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.seven_month }}{% if term.seven_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.eight_month }}{% if term.eight_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.nine_month }}{% if term.nine_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.ten_month }}{% if term.ten_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.eleven_month }}{% if term.eleven_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.twelve_month }}{% if term.twelve_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.twentyfour_month }}{% if term.twentyfour_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"> {{ term.thirtysix_month }}{% if term.thirtysix_month == '-' %} {% else %} % {% endif %}</td>
+                                    </tr>
                                 {% endfor %}
                               </tbody>
                             </table>
                           </div>
-
                       </section>
                   </div>
-              </div> 
+                </div> <!-- end row -->
+                {% endif %}
             </div>
         </div>
 
