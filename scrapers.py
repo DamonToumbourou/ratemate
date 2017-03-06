@@ -7,9 +7,8 @@ import time
 import re
 import private
 import urllib
-from textract import process
+#from textract import process
 from tika import parser
-import bank_logo
 PHANTOMJS_PATH = './phantomjs'
 
 class WebScrapers(object):
@@ -1186,16 +1185,13 @@ class WebScrapers(object):
     def collate_td(self):
          
         term_deposit = []
-<<<<<<< HEAD
-
-=======
+        
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.ehlo()
         server.starttls()
         server.ehlo()
         server.login(private.username_gm, private.password_gm)
         
->>>>>>> 8ea8ec5b417e7c5b41bd63c759ce50db27f9e377
         print 'fetching rates for ANZ Standard...'
         try:
             anz_standard_td = self.get_anz_standard_td()
