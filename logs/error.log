@@ -1,0 +1,43 @@
+2017-02-27 10:02:23 [26870] [INFO] Starting gunicorn 18.0
+2017-02-27 10:02:23 [26870] [INFO] Listening at: http://127.0.0.1:8000 (26870)
+2017-02-27 10:02:23 [26870] [INFO] Using worker: sync
+2017-02-27 10:02:23 [26875] [INFO] Booting worker with pid: 26875
+2017-02-27 10:02:34 [26881] [INFO] Starting gunicorn 18.0
+2017-02-27 10:02:34 [26881] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:34 [26881] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:35 [26881] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:35 [26881] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:36 [26881] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:36 [26881] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:37 [26881] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:37 [26881] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:38 [26881] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:38 [26881] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:39 [26881] [ERROR] Can't connect to ('127.0.0.1', 8000)
+2017-02-27 10:02:46 [26889] [INFO] Starting gunicorn 18.0
+2017-02-27 10:02:46 [26889] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:46 [26889] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:47 [26889] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:47 [26889] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:48 [26889] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:48 [26889] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:49 [26889] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:49 [26889] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:50 [26889] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:50 [26889] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:51 [26889] [ERROR] Can't connect to ('127.0.0.1', 8000)
+2017-02-27 10:02:52 [26896] [INFO] Starting gunicorn 18.0
+2017-02-27 10:02:52 [26896] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:52 [26896] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:53 [26896] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:53 [26896] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:54 [26896] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:54 [26896] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:55 [26896] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:55 [26896] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:56 [26896] [ERROR] Connection in use: ('127.0.0.1', 8000)
+2017-02-27 10:02:56 [26896] [ERROR] Retrying in 1 second.
+2017-02-27 10:02:57 [26896] [ERROR] Can't connect to ('127.0.0.1', 8000)
+2017-02-27 10:05:03 [26870] [INFO] Handling signal: term
+2017-02-27 10:05:03 [26875] [INFO] Worker exiting (pid: 26875)
+2017-02-27 10:05:03 [26870] [INFO] Shutting down: Master

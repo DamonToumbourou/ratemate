@@ -1,7 +1,6 @@
 from flask import Flask, render_template, url_for, g, redirect, session, request, flash
 from scrapers import WebScrapers
 from openpyxl import Workbook
-from db_handlers import DB_Tools
 import private
 import os
 import sqlite3
@@ -251,4 +250,4 @@ def get_big_4_td():
     return big_4
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

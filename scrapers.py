@@ -5,8 +5,9 @@ from flask import flash
 import requests
 import time
 import re
+import smtplib
 
-PHANTOMJS_PATH = './phantomjs'
+PHANTOMJS_PATH = '/usr/local/bin/phantomjs'
 
 class WebScrapers(object):
     
@@ -678,9 +679,9 @@ class WebScrapers(object):
 
 
     def collate_td(self):
-        
-        term_deposit = []
          
+        term_deposit = []
+
         print 'fetching rates for ANZ Standard...'
         try:
             anz_standard_td = self.get_anz_standard_td()
