@@ -2,14 +2,15 @@ from bs4 import BeautifulSoup as bs4
 from requests import get
 from selenium import webdriver
 from flask import flash
+from textract import process
+from tika import parser
 import requests
 import time
 import re
 import private
 import urllib
-from textract import process
-from tika import parser
-import bank_logo
+import smtplib
+
 PHANTOMJS_PATH = './phantomjs'
 
 class WebScrapers(object):

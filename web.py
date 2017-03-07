@@ -172,6 +172,27 @@ def pensioner():
     return render_template('pensioner.html', pensioner=pensioner)
 
 
+@app.route('/home_loan')
+def home_loan():
+    db = get_db()
+    
+    try:
+        most_recent_time = db.execute('SELECT MAX(date) from pensioner')
+        most_recent_time = most_recent_time.fetchall()
+        most_recent_time = most_recent_time[0][0] + 120 
+        time_range = most_recent_time - 300 
+
+        cur = db.execute('select logo, date, name, notes, product, _0k, _2k, _5K, ' \
+                         'date from pensioner WHERE date BETWEEN ' + str(time_range) + ' AND ' + str(most_recent_time) )
+        home_loan = cur.fetchall()
+    
+    except:
+        home_loan = None
+        print 'no online pensioners found'
+
+    return render_template('home_loan.html', home_loan=home_loan)
+
+
 """
 Routes for scraping data
 """

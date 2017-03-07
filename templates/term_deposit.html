@@ -16,7 +16,7 @@
             
             <div class="col-lg-12">
             
-                <h2 class="page-header"><i class="fa fa-laptop"></i> Term Deposits</h2>
+                <h2 class="page-header"><i class="fa fa-clock-o"></i> Term Deposits</h2>
                 <p> Latest retail term deposit rates</p>
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
@@ -72,16 +72,16 @@
                                         <td><img src="./static/img/{{ term.logo }}" width="42" height="42"> &nbsp{{ term.name }}</th>
                                         <td align="center"> {{ term.one_month }}{% if term.one_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.two_month }}{% if term.two_month == '-' %} {% else %} % {% endif %}</td>
-                                        <td align="center"> {{ term.three_month }}{% if term.three_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"><strong style="color:black">{{ term.three_month }}{% if term.three_month == '-' %} {% else %} % {% endif %}</strong></td>
                                         <td align="center"> {{ term.four_month }}{% if term.four_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.five_month }}{% if term.five_month == '-' %} {% else %} % {% endif %}</td>
-                                        <td align="center"> {{ term.six_month }}{% if term.six_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"><strong style="color:black"> {{ term.six_month }}{% if term.six_month == '-' %} {% else %} % {% endif %}</strong></td>
                                         <td align="center"> {{ term.seven_month }}{% if term.seven_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.eight_month }}{% if term.eight_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.nine_month }}{% if term.nine_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.ten_month }}{% if term.ten_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.eleven_month }}{% if term.eleven_month == '-' %} {% else %} % {% endif %}</td>
-                                        <td align="center"> {{ term.twelve_month }}{% if term.twelve_month == '-' %} {% else %} % {% endif %}</td>
+                                        <td align="center"><strong style="color:black"> {{ term.twelve_month }}{% if term.twelve_month == '-' %} {% else %} % {% endif %}</strong></td>
                                         <td align="center"> {{ term.twentyfour_month }}{% if term.twentyfour_month == '-' %} {% else %} % {% endif %}</td>
                                         <td align="center"> {{ term.thirtysix_month }}{% if term.thirtysix_month == '-' %} {% else %} % {% endif %}</td>
                                     </tr>
