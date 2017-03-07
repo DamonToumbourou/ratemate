@@ -9,6 +9,8 @@ import time
 import re
 import private
 import urllib
+#from textract import process
+from tika import parser
 import smtplib
 
 PHANTOMJS_PATH = './phantomjs'
@@ -1187,6 +1189,7 @@ class WebScrapers(object):
     def collate_td(self):
          
         term_deposit = []
+        
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.ehlo()
         server.starttls()
