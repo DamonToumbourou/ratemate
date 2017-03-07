@@ -22,7 +22,7 @@ create table term_deposit (
     thirtysix_month text not null,
     date real
 );
-
+*/
 drop table if exists online_saver;
 
 create table online_saver (
@@ -36,7 +36,7 @@ create table online_saver (
     total text not null,
     date real
 );
-
+/*
 drop table if exists progress_saver;
 
 create table progress_saver (
@@ -66,7 +66,7 @@ create table cash_manager (
     _50k text not null,
     date real
 );
-*/
+
 drop table if exists pensioner;
 
 create table pensioner (
@@ -80,3 +80,4 @@ create table pensioner (
     _0k text not null,
     date real
 );
+*/

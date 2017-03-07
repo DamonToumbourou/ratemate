@@ -3,7 +3,7 @@
 
 <script>
     function init() {
-        var sortesa = tsorter.create('progressRates');
+        var sortesa = tsorter.create('pensionerRates');
     }
     window.onload = init;
 </script>
@@ -14,12 +14,12 @@
             
             <div class="col-lg-12">
             
-                <h2 class="page-header"><i class="fa fa-line-chart"></i> Progress Savers</h2>
-                <p> Latest retail progress saver rates</p>
+                <h2 class="page-header"><i class="fa fa-home"></i> Home Loans</h2>
+                <p> Latest retail home loan rates</p>
                 <a href='static/test.xlsx'>    
                     <span class="badge bg-success">Download Sheet</span>
                 </a>
-                <a href="{{ '/add_progress' }}">    
+                <a href="{{ '/add_home' }}">    
                     <span class="badge bg-success">Refresh Rates</span>
                 </a>
                 
@@ -33,11 +33,11 @@
                 <hr>
 
 
-            {% if progress_saver %}
+            {% if home_lon %}
             
-            <h3 class="page-header"> All retail progress saver rates</h3>
+            <h3 class="page-header"> Home Loan Rates</h3>
  
-            <!-- Table for all progress saver rates-->
+            <!-- Table for all pensioner rates-->
             <div class="row">
                 <div class="col-lg-12">
                     <section class="panel">
@@ -49,19 +49,19 @@
                                 <thead>
                                     <tr>
                                         <th>Institution</th>
-                                        <th>Base rate</th>
-                                        <th>Bonus rate</th>
-                                        <th>Total Rate</th>
+                                        <th>0 - 2k</th>
+                                        <th>2k - 50k</th>
+                                        <th>50k and over</th>
                                         <th>Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for rate in progress_saver %}
+                                {% for rate in home_loan %}
                                     <tr>
-                                        <td><img src="./static/img/{{ rate.logo }}" width="42" height="42"> &nbsp{{ rate.product }}</td>
-                                        <td> {{ rate.base }}%</td>
-                                        <td> {{ rate.bonus }}%</td>
-                                        <td> {{ rate.total }}%</td>
+                                        <td><img src="./static/img/{{ rate.lo }}" width="42" height="42"> &nbsp{{ rate.produ }}</td>
+                                        <td> {{ rate._0 }}%</td>
+                                        <td> {{ rate._2k }}%</td>
+                                        <td> {{ rate._5k }}%</td>
                                         <td> {{ rate.notes }}</td>
                                     </tr>
                                 {% endfor %}
