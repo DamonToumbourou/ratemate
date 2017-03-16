@@ -1,5 +1,5 @@
 /*drop table if exists term_deposit;*/
-/*
+
 create table term_deposit (
     id integer primary key autoincrement,
     name text not null,
@@ -22,8 +22,8 @@ create table term_deposit (
     thirtysix_month text not null,
     date real
 );
-*/
-drop table if exists online_saver;
+
+/*drop table if exists online_saver;*/
 
 create table online_saver (
     id integer primary key autoincrement,
@@ -36,8 +36,8 @@ create table online_saver (
     total text not null,
     date real
 );
-/*
-drop table if exists progress_saver;
+
+/*drop table if exists progress_saver;*/
 
 create table progress_saver (
     id integer primary key autoincrement,
@@ -52,7 +52,7 @@ create table progress_saver (
 );
 
 
-drop table if exists cash_manager;
+/*drop table if exists cash_manager;*/
 
 create table cash_manager (
     id integer primary key autoincrement,
@@ -67,7 +67,7 @@ create table cash_manager (
     date real
 );
 
-drop table if exists pensioner;
+/*drop table if exists pensioner;*/
 
 create table pensioner (
     id integer primary key autoincrement,
@@ -80,4 +80,4 @@ create table pensioner (
     _0k text not null,
     date real
 );
-*/
+
